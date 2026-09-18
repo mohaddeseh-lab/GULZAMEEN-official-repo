@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "cultural_item": {
+      "title": "Cultural Item",
+      "description": "Balochi folklore, music, recipes, embroidery, or proverbs record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "balochiTitle": { "type": "string", "maxLength": 200 },
+        "region": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string", "maxLength": 5000 },
+        "audioUrl": { "type": "string", "maxLength": 2000 },
+        "mediaUrl": { "type": "string", "maxLength": 2000 },
+        "mediaType": { "type": "string" },
+        "contributor": { "type": "string", "maxLength": 100 },
+        "contributorId": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "featured": { "type": "boolean" },
+        "translation": { "type": "string", "maxLength": 2000 }
+      },
+      "required": ["id", "title", "region", "category", "description", "createdAt"]
+    },
+    "contribution": {
+      "title": "Community Contribution",
+      "description": "User uploaded archive entries and folklore stories.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "contributorName": { "type": "string", "maxLength": 100 },
+        "contributorId": { "type": "string" },
+        "region": { "type": "string" },
+        "category": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 5000 },
+        "mediaUrl": { "type": "string", "maxLength": 2000 },
+        "audioUrl": { "type": "string", "maxLength": 2000 },
+        "mediaType": { "type": "string" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "contributorName", "region", "category", "title", "description", "createdAt"]
+    },
+    "feedback": {
+      "title": "Feedback Entry",
+      "description": "User feedback and rating submitted to Gulzameen.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 200 },
+        "rating": { "type": "number" },
+        "suggestions": { "type": "string", "maxLength": 2000 },
+        "submittedAt": { "type": "number" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "name", "rating", "suggestions", "submittedAt"]
+    },
+    "report": {
+      "title": "Content Report",
+      "description": "Report flagged on a cultural item or contribution.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "itemId": { "type": "string" },
+        "itemTitle": { "type": "string", "maxLength": 200 },
+        "reason": { "type": "string", "maxLength": 500 },
+        "additionalDetails": { "type": "string", "maxLength": 2000 },
+        "reportedAt": { "type": "number" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "itemId", "itemTitle", "reason", "reportedAt"]
+    }
+  },
+  "firestore": {
+    "/cultural_items/{itemId}": {
+      "schema": { "$ref": "#/entities/cultural_item" },
+      "description": "Collection of cultural artifact items"
+    },
+    "/contributions/{contributionId}": {
+      "schema": { "$ref": "#/entities/contribution" },
+      "description": "Collection of user community contributions"
+    },
+    "/feedback/{feedbackId}": {
+      "schema": { "$ref": "#/entities/feedback" },
+      "description": "Collection of feedback entries"
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/report" },
+      "description": "Collection of flagged content reports"
+    }
+  }
+}
