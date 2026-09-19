@@ -1,6 +1,0 @@
-{
-  "name": "Gulzameen",
-  "description": "A Living Digital Culture platform exploring the rich heritage, folk tales, music, patterns, and traditions of Balochistan.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
