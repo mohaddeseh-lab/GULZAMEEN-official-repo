@@ -1,69 +1,203 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { CulturalItem, Contribution, RegionId, CategoryId, FeedbackData } from '../lib/types';
+import { INITIAL_CULTURAL_ITEMS } from '../lib/initialData';
+import { Navbar } from '../components/Navbar';
+import { Hero } from '../components/Hero';
+import { RegionExplorer } from '../components/RegionExplorer';
+import { CulturalHistory } from '../components/CulturalHistory';
+import { NetworkGraph } from '../components/NetworkGraph';
+import { AnalyticsSection } from '../components/AnalyticsSection';
+import { ContributionHub } from '../components/ContributionHub';
+import { GamesSection } from '../components/GamesSection';
+import { FeedbackSection } from '../components/FeedbackSection';
+import { Footer } from '../components/Footer';
+
+// Saves to the visitor's own browser. Never crashes if storage is full or blocked.
+function saveLocal(key: string, value: unknown) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.warn('Could not save', key, e);
+  }
+}
+
+function isAudioMedia(c: { audioUrl?: string; mediaType?: string; mediaUrl?: string }) {
+  return Boolean(
+    c.audioUrl ||
+      c.mediaType === 'audio' ||
+      (c.mediaUrl &&
+        (c.mediaUrl.startsWith('data:audio') ||
+          /\.(mp3|wav|ogg|m4a|aac|webm)(\?.*)?$/i.test(c.mediaUrl)))
+  );
+}
 
 export default function Home() {
+  const [culturalItems, setCulturalItems] = useState<CulturalItem[]>(INITIAL_CULTURAL_ITEMS);
+  const [contributions, setContributions] = useState<Contribution[]>([]);
+  const [feedbacks, setFeedbacks] = useState<FeedbackData[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  const [isContributeModalOpen, setIsContributeModalOpen] = useState(false);
+  const [modalDefaultRegion, setModalDefaultRegion] = useState<RegionId>('eastern');
+  const [modalDefaultCategory, setModalDefaultCategory] = useState<CategoryId>('kissa');
+
+  // Load anything this visitor saved earlier (runs after the page appears)
+  useEffect(() => {
+    try {
+      const savedItems = localStorage.getItem('gz_cultural_items_v1');
+      if (savedItems) setCulturalItems(JSON.parse(savedItems));
+      const savedContribs = localStorage.getItem('gz_contributions_v1');
+      if (savedContribs) setContributions(JSON.parse(savedContribs));
+      const savedFeedbacks = localStorage.getItem('gz_feedbacks_v1');
+      if (savedFeedbacks) setFeedbacks(JSON.parse(savedFeedbacks));
+    } catch (e) {
+      console.error('Could not read saved data', e);
+    }
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (loaded) saveLocal('gz_cultural_items_v1', culturalItems);
+  }, [culturalItems, loaded]);
+
+  useEffect(() => {
+    if (loaded) saveLocal('gz_contributions_v1', contributions);
+  }, [contributions, loaded]);
+
+  useEffect(() => {
+    if (loaded) saveLocal('gz_feedbacks_v1', feedbacks);
+  }, [feedbacks, loaded]);
+
+  const handleOpenContributeModal = (region?: RegionId, category?: CategoryId) => {
+    if (region) setModalDefaultRegion(region);
+    if (category) setModalDefaultCategory(category);
+    setIsContributeModalOpen(true);
+  };
+
+  const handleAddContribution = (newContrib: Omit<Contribution, 'id' | 'createdAt'>) => {
+    const timestamp = Date.now();
+    const contributionObj: Contribution = {
+      ...newContrib,
+      id: `contrib-${timestamp}`,
+      createdAt: timestamp,
+    };
+    setContributions((prev) => [contributionObj, ...prev]);
+
+    // TODO (phase 3): also save this contribution to Supabase
+
+    const audio = isAudioMedia(newContrib);
+    const newCulturalItem: CulturalItem = {
+      id: `cultural-${timestamp}`,
+      title: newContrib.title,
+      region: newContrib.region,
+      category: newContrib.category,
+      description: newContrib.description,
+      contributor: newContrib.contributorName,
+      createdAt: timestamp,
+      mediaUrl: audio ? undefined : newContrib.mediaUrl,
+      audioUrl: audio ? newContrib.audioUrl || newContrib.mediaUrl : newContrib.audioUrl,
+      mediaType: audio ? 'audio' : newContrib.mediaType,
+    };
+    setCulturalItems((prev) => [newCulturalItem, ...prev]);
+  };
+
+  const handleRemoveCulturalItem = (itemId: string) => {
+    setCulturalItems((prev) => prev.filter((item) => item.id !== itemId));
+  };
+
+  const handleRemoveContribution = (contribId: string) => {
+    setContributions((prev) => prev.filter((c) => c.id !== contribId));
+    setCulturalItems((prev) =>
+      prev.filter(
+        (item) =>
+          item.id !== `cultural-${contribId.replace('contrib-', '')}` && item.id !== contribId
+      )
+    );
+  };
+
+  const handleReportContent = (
+    itemId: string,
+    itemTitle: string,
+    reason: string,
+    details?: string
+  ) => {
+    const newReport = {
+      id: `report-${Date.now()}`,
+      itemId,
+      itemTitle,
+      reason,
+      additionalDetails: details || '',
+      reportedAt: Date.now(),
+    };
+    try {
+      const existing = JSON.parse(localStorage.getItem('gz_content_reports') || '[]');
+      localStorage.setItem('gz_content_reports', JSON.stringify([newReport, ...existing]));
+    } catch (e) {
+      console.error('Failed to save content report', e);
+    }
+    // TODO (phase 3): also save this report to Supabase so it shows up on the admin page
+  };
+
+  const handleAddFeedback = (feedback: Omit<FeedbackData, 'id' | 'submittedAt'>) => {
+    const newFeedbackObj: FeedbackData = {
+      ...feedback,
+      id: `fb-${Date.now()}`,
+      submittedAt: Date.now(),
+    };
+    setFeedbacks((prev) => [newFeedbackObj, ...prev]);
+    // TODO (phase 3): also save this feedback to Supabase
+  };
+
+  const storiesCount = culturalItems.filter((i) => i.category === 'kissa').length;
+  const songsCount = culturalItems.filter((i) => i.category === 'saoth').length;
+  const patternsCount = culturalItems.filter((i) => i.category === 'baloch_duch').length;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="min-h-screen bg-[#F9F4EE] text-[#2B231F] font-sans selection:bg-[#D4AF37] selection:text-[#1A100C]">
+      <Navbar onOpenContributeModal={() => handleOpenContributeModal()} />
+
+      <Hero
+        onOpenContributeModal={() => handleOpenContributeModal()}
+        statsCount={{
+          stories: storiesCount,
+          songs: songsCount,
+          patterns: patternsCount,
+          regions: 3,
+        }}
+      />
+
+      <RegionExplorer
+        culturalItems={culturalItems}
+        onOpenContributeModal={handleOpenContributeModal}
+        onRemoveItem={handleRemoveCulturalItem}
+        onReportItem={handleReportContent}
+      />
+
+      <CulturalHistory />
+
+      <NetworkGraph />
+
+      <AnalyticsSection culturalItems={culturalItems} totalContributions={contributions.length} />
+
+      <ContributionHub
+        contributions={contributions}
+        onSubmitContribution={handleAddContribution}
+        onRemoveContribution={handleRemoveContribution}
+        onReportContribution={handleReportContent}
+        onOpenModal={() => handleOpenContributeModal()}
+        isOpenModal={isContributeModalOpen}
+        onCloseModal={() => setIsContributeModalOpen(false)}
+        defaultRegion={modalDefaultRegion}
+        defaultCategory={modalDefaultCategory}
+      />
+
+      <GamesSection />
+
+      <FeedbackSection onAddFeedback={handleAddFeedback} />
+
+      <Footer />
     </div>
   );
 }
