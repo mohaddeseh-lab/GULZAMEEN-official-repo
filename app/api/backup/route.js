@@ -3,7 +3,6 @@ import {
   ListObjectsV2Command,
   GetObjectCommand,
   PutObjectCommand,
-  HeadObjectCommand,
 } from '@aws-sdk/client-s3'
 
 const r2 = new S3Client({
@@ -33,6 +32,22 @@ export async function POST(req) {
 
   let step = 'starting'
   try {
+    // 1. Everything already in the AWS backup (one listing, not one request per file)
+    step = 'listing the AWS backup bucket'
+    const have = new Set()
+    let awsToken
+    do {
+      const l = await aws.send(
+        new ListObjectsV2Command({
+          Bucket: process.env.AWS_BACKUP_BUCKET,
+          ContinuationToken: awsToken,
+        })
+      )
+      for (const o of l.Contents || []) have.add(o.Key)
+      awsToken = l.IsTruncated ? l.NextContinuationToken : undefined
+    } while (awsToken)
+
+    // 2. Copy what is missing, at most MAX_PER_RUN files per click
     let copied = 0
     let skipped = 0
     let token
@@ -47,27 +62,10 @@ export async function POST(req) {
       )
 
       for (const obj of list.Contents || []) {
-        step = `checking ${obj.Key} in AWS`
-        let exists = true
-        try {
-          await aws.send(
-            new HeadObjectCommand({
-              Bucket: process.env.AWS_BACKUP_BUCKET,
-              Key: obj.Key,
-            })
-          )
-        } catch (e) {
-          if (e.name === 'NotFound' || e.$metadata?.httpStatusCode === 404) {
-            exists = false
-          } else {
-            throw e
-          }
-        }
-        if (exists) {
+        if (have.has(obj.Key)) {
           skipped = skipped + 1
           continue
         }
-
         if (copied >= MAX_PER_RUN) {
           return Response.json({ backedUp: copied, alreadyBackedUp: skipped, more: true })
         }
@@ -97,9 +95,7 @@ export async function POST(req) {
   } catch (e) {
     console.error('Backup failed while', step, e)
     return Response.json(
-      {
-        error: `Failed while ${step}: ${e.name} - ${String(e.message).split('\n')[0]}`,
-      },
+      { error: `Failed while ${step}: ${e.name} - ${String(e.message).split('\n')[0]}` },
       { status: 500 }
     )
   }
