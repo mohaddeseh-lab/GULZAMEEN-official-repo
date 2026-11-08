@@ -1,59 +1,65 @@
-
-'use client';
-
-import { useState } from 'react';
-import { supabase } from '../../lib/supabase';
+'use client'
+import { useState } from 'react'
+import { supabase } from '../../lib/supabase'
 
 export default function Upload() {
-    const [file, setFile] = useState(null);
-    const [status, setStatus] = useState('');
+  const [file, setFile] = useState(null)
+  const [status, setStatus] = useState('')
 
-    async function handleUpload(e) {
-        e.preventDefault();
-
-        if (!file) {
-            return;
-        }
-
-        if (file.size > 50 * 1024 * 1024) {
-            setStatus('File too large (max 50MB)');
-            return;
-        }
-
-        setStatus('Uploading...');
-
-        const res = await JSON.stringify
-        ({ filename: file.name, contentType: file.type, size: file.size 
-        });
-
-        const data = await res.json();
-        const url = data.url;
-        const key = data.key;
-
-        await fetch(url, { method: 'PUT', 
-            body: file, headers: { 'Content-Type': file.type } })
-        await supabase.from('files').insert({
-            filename: file.name,
-            r2_key: key,
-            size_bytes: file.size,
-            mime_type: file.type
-        });
-
-        setStatus('Uploaded!');
+  async function handleUpload(e) {
+    e.preventDefault()
+    if (!file) {
+      return
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      setStatus('File too large (max 50MB)')
+      return
     }
 
-    return (
-        <form onSubmit={handleUpload}>
-            <input
-                type="file"
-                onChange={e => setFile(e.target.files[0])}
-            />
+    setStatus('Uploading...')
 
-            <button type="submit">
-                Upload
-            </button>
+    const res = await fetch('/api/upload-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        filename: file.name,
+        contentType: file.type,
+        size: file.size,
+      }),
+    })
+    const data = await res.json()
 
-            <p>{status}</p>
-        </form>
-    );
+    if (!res.ok) {
+      setStatus(data.error || 'Upload failed')
+      return
+    }
+
+    const put = await fetch(data.url, {
+      method: 'PUT',
+      body: file,
+      headers: { 'Content-Type': file.type },
+    })
+
+    if (!put.ok) {
+      setStatus('Upload failed')
+      return
+    }
+
+    await supabase.from('files').insert({
+      filename: file.name,
+      r2_key: data.key,
+      size_bytes: file.size,
+      mime_type: file.type,
+    })
+
+    setStatus('Uploaded!')
+  }
+
+  return (
+    <form onSubmit={handleUpload}>
+      <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+      <button type="submit">Upload</button>
+      <p>{status}</p>
+    </form>
+  )
 }
