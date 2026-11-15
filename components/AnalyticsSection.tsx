@@ -61,7 +61,7 @@ export const AnalyticsSection: React.FC<AnalyticsProps> = ({
     {
       label: 'Music & Songs (Saoth)',
       count: musicCount,
-      color: 'bg-[#C05A3E]',
+      color: 'bg-[#A8452C]',
       textColor: 'text-white',
     },
     {
@@ -151,14 +151,14 @@ export const AnalyticsSection: React.FC<AnalyticsProps> = ({
                 Total Archived Items
               </div>
 
-              <div className="text-[10px] text-[#C05A3E] font-semibold mt-0.5">
+              <div className="text-[10px] text-[#A8452C] font-semibold mt-0.5">
                 Live Real-time Records
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-2xl p-6 border border-[#1A100C]/15 shadow-md flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[#C05A3E]/10 text-[#C05A3E] flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[#A8452C]/10 text-[#A8452C] flex items-center justify-center flex-shrink-0">
               <Users className="w-6 h-6" />
             </div>
 
@@ -171,7 +171,7 @@ export const AnalyticsSection: React.FC<AnalyticsProps> = ({
                 Community Contributions
               </div>
 
-              <div className="text-[10px] text-[#C05A3E] font-semibold mt-0.5">
+              <div className="text-[10px] text-[#A8452C] font-semibold mt-0.5">
                 User Submitted & Moderated
               </div>
             </div>
@@ -191,7 +191,7 @@ export const AnalyticsSection: React.FC<AnalyticsProps> = ({
                 Cultural Standard
               </div>
 
-              <div className="text-[10px] text-[#C05A3E] font-semibold mt-0.5">
+              <div className="text-[10px] text-[#A8452C] font-semibold mt-0.5">
                 No Simulated Data
               </div>
             </div>
@@ -226,10 +226,11 @@ export const AnalyticsSection: React.FC<AnalyticsProps> = ({
 
                     <div className="w-full bg-[#FAF4EB] h-3.5 rounded-full overflow-hidden border border-[#2D1E18]/10 p-0.5">
                       <div
+                        // CHANGED: scaleX instead of width so the animation runs on the GPU
                         style={{
-                          width: `${(cat.count / maxCategoryVal) * 100}%`,
+                          transform: `scaleX(${maxCategoryVal ? cat.count / maxCategoryVal : 0})`,
                         }}
-                        className={`h-full rounded-full ${cat.color} transition-all duration-500`}
+                        className={`h-full w-full origin-left rounded-full ${cat.color} transition-transform duration-500`}
                       />
                     </div>
 
@@ -244,7 +245,7 @@ export const AnalyticsSection: React.FC<AnalyticsProps> = ({
             <div>
 
               <h3 className="font-serif text-xl font-bold text-[#2D1E18] mb-1 flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-[#C05A3E]" />
+                <MapPin className="w-5 h-5 text-[#A8452C]" />
                 Regional Preservation Breakdown
               </h3>
 
@@ -277,10 +278,11 @@ export const AnalyticsSection: React.FC<AnalyticsProps> = ({
 
                     <div className="w-full bg-[#FAF4EB] h-3.5 rounded-full overflow-hidden border border-[#2D1E18]/10 p-0.5">
                       <div
+                        // CHANGED: scaleX instead of width so the animation runs on the GPU
                         style={{
-                          width: `${(reg.count / maxRegionVal) * 100}%`,
+                          transform: `scaleX(${maxRegionVal ? reg.count / maxRegionVal : 0})`,
                         }}
-                        className="h-full rounded-full bg-gradient-to-r from-[#C05A3E] to-[#D4AF37] transition-all duration-500"
+                        className="h-full w-full origin-left rounded-full bg-gradient-to-r from-[#A8452C] to-[#D4AF37] transition-transform duration-500"
                       />
                     </div>
 

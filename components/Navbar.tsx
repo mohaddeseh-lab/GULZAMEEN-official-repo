@@ -90,7 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenContributeModal }) => {
                 onClick={(e) => handleNavClick(e, link.href)}
                 className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs uppercase tracking-wider font-semibold text-[#F9F4EE]/90 hover:text-[#D4AF37] hover:bg-[#1A100C] transition-all duration-200"
               >
-                <Icon className="w-3.5 h-3.5 text-[#C2593F]" />
+                <Icon className="w-3.5 h-3.5 text-[#A8452C]" />
                 {link.name}
               </a>
             );
@@ -102,7 +102,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenContributeModal }) => {
 
           <button
             onClick={onOpenContributeModal}
-            className="relative group overflow-hidden flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#C2593F] via-[#D86C4E] to-[#9A3B1B] text-[#FAF4EE] transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(194,89,63,0.4)] hover:scale-[1.02] active:scale-95 border border-[#D4AF37]/40"
+            className="relative group overflow-hidden flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#A8452C] via-[#D86C4E] to-[#9A3B1B] text-[#FAF4EE] transition-all duration-300 shadow-md hover:shadow-[0_0_20px_rgba(194,89,63,0.4)] hover:scale-[1.02] active:scale-95 border border-[#D4AF37]/40"
           >
             <span className="absolute inset-0 w-full h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
             <PlusCircle className="w-4 h-4 text-[#F3E5AB] group-hover:rotate-90 transition-transform duration-300" />
@@ -158,7 +158,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenContributeModal }) => {
                 setMobileMenuOpen(false);
                 onOpenContributeModal();
               }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded text-xs font-semibold bg-[#C2593F] text-[#FAF4EE] border border-[#D4AF37]/30"
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded text-xs font-semibold bg-[#A8452C] text-[#FAF4EE] border border-[#D4AF37]/30"
             >
               <PlusCircle className="w-4 h-4 text-[#F3E5AB]" />
               Contribute Your Story

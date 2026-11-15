@@ -28,6 +28,38 @@ function fail(message, status = 400) {
   return Response.json({ error: message }, { status })
 }
 
+// NEW: sends the feedback to your inbox through Resend (https://resend.com).
+// Needs two secrets: RESEND_API_KEY and FEEDBACK_TO_EMAIL (your email address).
+async function emailFeedback({ name, email, rating, suggestions }) {
+  const apiKey = process.env.RESEND_API_KEY
+  const to = process.env.FEEDBACK_TO_EMAIL
+  if (!apiKey || !to) return
+
+  const replyTo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : undefined
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: process.env.FEEDBACK_FROM_EMAIL || 'Gulzameen <onboarding@resend.dev>',
+        to: [to],
+        reply_to: replyTo,
+        subject: `New Gulzameen feedback (${rating}/5)`,
+        text: [
+          `Rating: ${rating}/5`,
+          `Name: ${name || 'Anonymous'}`,
+          `Email: ${email || 'not given'}`,
+          '',
+          suggestions || '(no written suggestions)',
+        ].join('\n'),
+      }),
+      signal: AbortSignal.timeout(5000),
+    })
+  } catch (e) {
+    console.error('Feedback email failed', e)
+  }
+}
+
 export async function POST(req) {
   const ip =
     req.headers.get('cf-connecting-ip') ||
@@ -100,13 +132,17 @@ export async function POST(req) {
     const rating = Number.isInteger(body.rating) ? body.rating : 0
     if (rating < 1 || rating > 5) return fail('Rating must be 1 to 5')
 
-    const { error } = await supabaseAdmin.from('feedback').insert({
+    const feedback = {
       name: clean(body.name, 100),
       email: clean(body.email, 200),
       rating,
       suggestions: clean(body.suggestions, 2000),
-    })
+    }
+    const { error } = await supabaseAdmin.from('feedback').insert(feedback)
     if (error) return fail('Could not save', 500)
+
+    // NEW: also email the feedback to the site owner. A failed email never fails the request.
+    await emailFeedback(feedback)
     return Response.json({ ok: true })
   }
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cinzel, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { OfflineSupport } from "../components/OfflineSupport";
 
 const cinzel = Cinzel({
   variable: "--font-cinzel",
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${cinzel.variable} ${jakarta.variable} scroll-smooth`}>
       <body className="bg-[#F5E6D3] text-[#1A120E] antialiased selection:bg-[#D4AF37] selection:text-[#2D1E18]">
         {children}
+        <OfflineSupport />
       </body>
     </html>
   );

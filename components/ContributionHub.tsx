@@ -37,9 +37,10 @@ import {
 
 interface ContributionHubProps {
     contributions: Contribution[];
+    // CHANGED: resolves to an error message, or null when the upload worked
     onSubmitContribution: (
         newContrib: Omit<Contribution, 'id' | 'createdAt'>
-    ) => void;
+    ) => Promise<string | null> | void;
     onRemoveContribution?: (id: string) => void;
     onReportContribution?: (
         id: string,
@@ -53,6 +54,13 @@ interface ContributionHubProps {
     defaultRegion?: RegionId;
     defaultCategory?: CategoryId;
 }
+
+// NEW: label + colour for each submission status (all pass colour-contrast checks)
+const STATUS_STYLES: Record<'pending' | 'approved' | 'removed', { label: string; cls: string }> = {
+    pending: { label: 'Pending Review', cls: 'bg-amber-700' },
+    approved: { label: 'Approved', cls: 'bg-emerald-700' },
+    removed: { label: 'Removed', cls: 'bg-rose-700' }
+};
 
 export const ContributionHub: React.FC<ContributionHubProps> = ({
     contributions,
@@ -73,7 +81,9 @@ export const ContributionHub: React.FC<ContributionHubProps> = ({
     const [reportAlsoHide, setReportAlsoHide] = useState<boolean>(true);
     const [reportSubmitted, setReportSubmitted] = useState<boolean>(false);
 
-    const [deleteTarget, setDeleteTarget] = useState<Contribution | null>(null);
+    // CHANGED: submit state so the success card only shows after a real success
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState('');
 
     const [formData, setFormData] = useState({
         contributorName: '',
@@ -313,10 +323,10 @@ export const ContributionHub: React.FC<ContributionHubProps> = ({
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.contributorName || !formData.title) return;
+        if (!formData.contributorName || !formData.title || isSubmitting) return;
 
         const isAudioType =
             fileDetails?.type === 'audio' ||
@@ -329,7 +339,10 @@ export const ContributionHub: React.FC<ContributionHubProps> = ({
                 )
                 : false);
 
-        onSubmitContribution({
+        setIsSubmitting(true);
+        setSubmitError('');
+
+        const error = await onSubmitContribution({
             contributorName: formData.contributorName,
             region: formData.region as RegionId,
             category: formData.category as CategoryId,
@@ -341,6 +354,13 @@ export const ContributionHub: React.FC<ContributionHubProps> = ({
             audioUrl: isAudioType ? formData.mediaUrl : undefined,
             mediaType: isAudioType ? 'audio' : fileDetails?.type
         });
+
+        setIsSubmitting(false);
+
+        if (error) {
+            setSubmitError(error);
+            return;
+        }
 
         setSubmittedSuccess(true);
 
@@ -357,7 +377,7 @@ export const ContributionHub: React.FC<ContributionHubProps> = ({
                 description: '',
                 mediaUrl: ''
             });
-        }, 1800);
+        }, 3500);
     };
 
     const getRelativeTime = (timestamp: number) => {
@@ -406,7 +426,7 @@ return (
 
                             if (onOpenModal) onOpenModal();
                         }}
-                        className="relative group overflow-hidden px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#C05A3E] via-[#D4AF37] to-[#C05A3E] text-white font-bold text-xs uppercase tracking-wider hover:shadow-[0_0_25px_rgba(192,90,62,0.4)] transition-all duration-300 hover:scale-[1.02] active:scale-95 border border-[#FFF8DC]/20"
+                        className="relative group overflow-hidden px-8 py-3.5 rounded-xl bg-gradient-to-r from-[#A8452C] via-[#D4AF37] to-[#A8452C] text-white font-bold text-xs uppercase tracking-wider hover:shadow-[0_0_25px_rgba(192,90,62,0.4)] transition-all duration-300 hover:scale-[1.02] active:scale-95 border border-[#FFF8DC]/20"
                     >
                         <span className="absolute inset-0 w-full h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
 
@@ -418,7 +438,7 @@ return (
             <div className="bg-white rounded-2xl p-6 sm:p-8 border border-[#2D1E18]/15 shadow-md">
                 <div className="flex items-center justify-between pb-4 border-b border-[#2D1E18]/15 mb-6">
                     <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-[#C05A3E]" />
+                        <Clock className="w-4 h-4 text-[#A8452C]" />
 
                         <h3 className="font-serif text-xl font-bold text-[#2D1E18]">
                             Recent Contributions (Last 7 Days)
@@ -431,15 +451,15 @@ return (
                 </div>
 
                 {recentContributions.length === 0 ? (
-                    <div className="text-center py-10 text-xs text-[#4A3B34] italic bg-[#FAF4EB] rounded p-4 border border-dashed border-[#C05A3E]/30">
+                    <div className="text-center py-10 text-xs text-[#4A3B34] italic bg-[#FAF4EB] rounded p-4 border border-dashed border-[#A8452C]/30">
                         No new submissions in the last 7 days. Be the first to contribute this week!
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="flex gap-5 overflow-x-auto snap-x snap-mandatory pb-4 -mx-1 px-1">
                         {recentContributions.map((item) => (
                             <div
                                 key={item.id}
-                                className="bg-[#FAF4EB] rounded-lg p-5 border border-[#2D1E18]/15 hover:border-[#C05A3E] transition-all shadow-sm flex flex-col justify-between"
+                                className="snap-start shrink-0 w-[280px] sm:w-[340px] bg-[#FAF4EB] rounded-lg p-5 border border-[#2D1E18]/15 hover:border-[#A8452C] transition-colors shadow-sm flex flex-col justify-between"
                             >
                                 <div>
                                     <div className="flex items-center justify-between text-[10px] text-[#2D1E18] font-bold uppercase tracking-wider mb-2">
@@ -452,7 +472,7 @@ return (
                                         </span>
 
                                         <span className="text-[#4A3B34] font-semibold flex items-center gap-1">
-                                            <Clock className="w-3 h-3 text-[#C05A3E]" />
+                                            <Clock className="w-3 h-3 text-[#A8452C]" />
                                             {getRelativeTime(item.createdAt)}
                                         </span>
                                     </div>
@@ -473,7 +493,7 @@ return (
                                                     /\.(mp3|wav|ogg|m4a|aac|webm)(\?.*)?$/i
                                                 ) !== null))) ? (
                                         <div className="mt-3 p-2 rounded-lg bg-white border border-[#2D1E18]/15">
-                                            <div className="text-[10px] font-bold text-[#C05A3E] mb-1 flex items-center gap-1">
+                                            <div className="text-[10px] font-bold text-[#A8452C] mb-1 flex items-center gap-1">
                                                 <Music className="w-3 h-3" />
                                                 <span>Audio Track:</span>
                                             </div>
@@ -489,7 +509,11 @@ return (
                                             <img
                                                 src={item.mediaUrl}
                                                 alt={item.title}
-                                                className="w-full h-full object-cover"
+                                                loading="lazy"
+ decoding="async"
+ width={680}
+ height={380}
+ className="w-full h-full object-cover"
                                                 referrerPolicy="no-referrer"
                                             />
                                         </div>
@@ -498,7 +522,7 @@ return (
 
                                 <div className="mt-4 pt-3 border-t border-[#2D1E18]/10 flex items-center justify-between text-[11px] text-[#4A3B34]">
                                     <span className="flex items-center gap-1 font-semibold text-[#2D1E18]">
-                                        <User className="w-3 h-3 text-[#C05A3E]" />
+                                        <User className="w-3 h-3 text-[#A8452C]" />
                                         {item.contributorName}
                                     </span>
 
@@ -513,20 +537,16 @@ return (
                                             }}
                                             className="p-1 rounded text-[#2D1E18]/40 hover:text-amber-600 hover:bg-amber-100 transition-colors"
                                             title="Report Harmful Content"
+                                            aria-label="Report Harmful Content"
                                         >
                                             <Flag className="w-3.5 h-3.5" />
                                         </button>
 
-                                        <button
-                                            onClick={() => setDeleteTarget(item)}
-                                            className="p-1 rounded text-[#2D1E18]/40 hover:text-rose-600 hover:bg-rose-100 transition-colors"
-                                            title="Remove Contribution"
+                                        {/* CHANGED: real status instead of a hardcoded "Verified" */}
+                                        <span
+                                            className={`text-[10px] text-white px-2 py-0.5 rounded font-bold ml-1 ${STATUS_STYLES[item.status ?? 'pending'].cls}`}
                                         >
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                        </button>
-
-                                        <span className="text-[10px] bg-[#C05A3E] text-white px-2 py-0.5 rounded font-bold ml-1">
-                                            Verified
+                                            {STATUS_STYLES[item.status ?? 'pending'].label}
                                         </span>
                                     </div>
                                 </div>
@@ -549,14 +569,14 @@ return (
 
                     {submittedSuccess ? (
                         <div className="text-center py-12 space-y-4">
-                            <CheckCircle className="w-16 h-16 text-[#C05A3E] mx-auto animate-bounce" />
+                            <CheckCircle className="w-16 h-16 text-[#A8452C] mx-auto" />
 
                             <h3 className="font-serif text-2xl font-bold text-[#2D1E18]">
-                                Contribution Recorded!
+                                Thank You!
                             </h3>
 
-                            <p className="text-xs text-[#4A3B34] max-w-md mx-auto">
-                                Thank you for preserving Baloch culture. Your contribution has been added to the regional archive and recent submissions ticker.
+                            <p className="text-sm text-[#4A3B34] max-w-md mx-auto">
+                                Your contribution was sent and will appear on the site after review.
                             </p>
                         </div>
                     ) : (
@@ -580,11 +600,11 @@ return (
                                 <div>
                                     <label className="block text-xs font-bold text-[#2D1E18] mb-1.5 uppercase tracking-wider">
                                         Your Name / Elder&apos;s Credit
-                                        <span className="text-[#C05A3E]">*</span>
+                                        <span className="text-[#A8452C]">*</span>
                                     </label>
 
                                     <div className="relative">
-                                        <User className="w-4 h-4 text-[#C05A3E] absolute left-3 top-3" />
+                                        <User className="w-4 h-4 text-[#A8452C] absolute left-3 top-3" />
 
                                         <input
                                             type="text"
@@ -597,7 +617,7 @@ return (
                                                 })
                                             }
                                             placeholder="e.g. Mir Baloch / Grandma Zohra"
-                                            className="w-full bg-white border border-[#2D1E18]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none"
+                                            className="w-full bg-white border border-[#2D1E18]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none"
                                         />
                                     </div>
                                 </div>
@@ -605,11 +625,11 @@ return (
                                 <div>
                                     <label className="block text-xs font-bold text-[#2D1E18] mb-1.5 uppercase tracking-wider">
                                         Region
-                                        <span className="text-[#C05A3E]">*</span>
+                                        <span className="text-[#A8452C]">*</span>
                                     </label>
 
                                     <div className="relative">
-                                        <MapPin className="w-4 h-4 text-[#C05A3E] absolute left-3 top-3" />
+                                        <MapPin className="w-4 h-4 text-[#A8452C] absolute left-3 top-3" />
 
                                         <select
                                             value={formData.region}
@@ -619,7 +639,7 @@ return (
                                                     region: e.target.value as RegionId
                                                 })
                                             }
-                                            className="w-full bg-white border border-[#2D1E18]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none"
+                                            className="w-full bg-white border border-[#2D1E18]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none"
                                         >
                                             <option value="eastern">Eastern Balochistan</option>
                                             <option value="western">Western Balochistan</option>
@@ -636,11 +656,11 @@ return (
                                 <div>
                                     <label className="block text-xs font-bold text-[#2D1E18] mb-1.5 uppercase tracking-wider">
                                         Category
-                                        <span className="text-[#C05A3E]">*</span>
+                                        <span className="text-[#A8452C]">*</span>
                                     </label>
 
                                     <div className="relative">
-                                        <Tag className="w-4 h-4 text-[#C05A3E] absolute left-3 top-3" />
+                                        <Tag className="w-4 h-4 text-[#A8452C] absolute left-3 top-3" />
 
                                         <select
                                             value={formData.category}
@@ -650,7 +670,7 @@ return (
                                                     category: e.target.value as CategoryId
                                                 })
                                             }
-                                            className="w-full bg-white border border-[#2D1E18]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none"
+                                            className="w-full bg-white border border-[#2D1E18]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none"
                                         >
                                             <option value="kissa">Folk Stories (Kissa)</option>
                                             <option value="saoth">Traditional Music (Saoth)</option>
@@ -666,11 +686,11 @@ return (
                                 <div>
                                     <label className="block text-xs font-bold text-[#2D1E18] mb-1.5 uppercase tracking-wider">
                                         Title of Item
-                                        <span className="text-[#C05A3E]">*</span>
+                                        <span className="text-[#A8452C]">*</span>
                                     </label>
 
                                     <div className="relative">
-                                        <FileText className="w-4 h-4 text-[#C05A3E] absolute left-3 top-3" />
+                                        <FileText className="w-4 h-4 text-[#A8452C] absolute left-3 top-3" />
 
                                         <input
                                             type="text"
@@ -683,7 +703,7 @@ return (
                                                 })
                                             }
                                             placeholder="e.g. Tale of Mir Lelo / Secret Sajji Spice Blend"
-                                            className="w-full bg-white border border-[#2D1E18]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none"
+                                            className="w-full bg-white border border-[#2D1E18]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none"
                                         />
                                     </div>
                                 </div>
@@ -709,7 +729,7 @@ return (
                                         })
                                     }
                                     placeholder="Write the story, recipe ingredients, song lyrics, embroidery technique, or proverb meaning (optional)..."
-                                    className="w-full bg-white border border-[#2D1E18]/20 rounded p-3 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none"
+                                    className="w-full bg-white border border-[#2D1E18]/20 rounded p-3 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none"
                                 />
                             </div>
                             
@@ -722,7 +742,7 @@ return (
             </span>
         </label>
 
-        <span className="text-[10px] text-[#C05A3E] font-semibold">
+        <span className="text-[10px] text-[#A8452C] font-semibold">
             Audio • Voice • Files • Drive • Link
         </span>
     </div>
@@ -733,7 +753,7 @@ return (
             onClick={() => setImportSource('audio')}
             className={`py-1.5 px-1.5 rounded-md flex items-center justify-center gap-1 transition-all ${
                 importSource === 'audio'
-                    ? 'bg-[#C05A3E] text-white shadow-sm'
+                    ? 'bg-[#A8452C] text-white shadow-sm'
                     : 'text-[#2D1E18]/70 hover:text-[#2D1E18]'
             }`}
         >
@@ -746,7 +766,7 @@ return (
             onClick={() => setImportSource('mic')}
             className={`py-1.5 px-1.5 rounded-md flex items-center justify-center gap-1 transition-all ${
                 importSource === 'mic'
-                    ? 'bg-[#C05A3E] text-white shadow-sm'
+                    ? 'bg-[#A8452C] text-white shadow-sm'
                     : 'text-[#2D1E18]/70 hover:text-[#2D1E18]'
             }`}
         >
@@ -808,7 +828,7 @@ return (
     </div>
 
     {fileDetails ? (
-        <div className="p-3 bg-[#FAF4EB] rounded-lg border border-[#C05A3E]/30 space-y-2">
+        <div className="p-3 bg-[#FAF4EB] rounded-lg border border-[#A8452C]/30 space-y-2">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 overflow-hidden">
                     <div className="w-10 h-10 rounded bg-[#2D1E18] text-[#D4AF37] flex items-center justify-center flex-shrink-0">
@@ -843,7 +863,7 @@ return (
                 <button
                     type="button"
                     onClick={handleClearFile}
-                    className="p-1.5 text-[#C05A3E] hover:bg-[#C05A3E]/10 rounded flex-shrink-0"
+                    className="p-1.5 text-[#A8452C] hover:bg-[#A8452C]/10 rounded flex-shrink-0"
                     title="Remove file"
                 >
                     <Trash2 className="w-4 h-4" />
@@ -852,7 +872,7 @@ return (
 
             {fileDetails.type === 'audio' && fileDetails.previewUrl && (
                 <div className="pt-2 border-t border-[#2D1E18]/10">
-                    <div className="text-[10px] font-bold text-[#C05A3E] mb-1 flex items-center gap-1">
+                    <div className="text-[10px] font-bold text-[#A8452C] mb-1 flex items-center gap-1">
                         <Volume2 className="w-3 h-3" />
                         <span>Audio File Preview (Press Play to Test):</span>
                     </div>
@@ -870,7 +890,7 @@ return (
             {importSource === 'audio' && (
                 <div
                     onClick={() => audioInputRef.current?.click()}
-                    className="border-2 border-dashed border-[#C05A3E]/40 hover:border-[#C05A3E] rounded-lg p-5 text-center cursor-pointer transition-colors bg-[#FAF4EB]/80"
+                    className="border-2 border-dashed border-[#A8452C]/40 hover:border-[#A8452C] rounded-lg p-5 text-center cursor-pointer transition-colors bg-[#FAF4EB]/80"
                 >
                     <input
                         ref={audioInputRef}
@@ -880,7 +900,7 @@ return (
                         onChange={handleFileUpload}
                     />
 
-                    <Music className="w-8 h-8 text-[#C05A3E] mx-auto mb-2" />
+                    <Music className="w-8 h-8 text-[#A8452C] mx-auto mb-2" />
 
                     <div className="text-xs font-bold text-[#2D1E18]">
                         Click to Upload Audio File (Song, Folk Tale, Instrument)
@@ -893,12 +913,12 @@ return (
             )}
 
             {importSource === 'mic' && (
-                <div className="border-2 border-dashed border-[#C05A3E]/40 rounded-lg p-5 text-center bg-[#FAF4EB]/80 space-y-3">
+                <div className="border-2 border-dashed border-[#A8452C]/40 rounded-lg p-5 text-center bg-[#FAF4EB]/80 space-y-3">
                     <Mic
                         className={`w-8 h-8 mx-auto ${
                             isRecording
                                 ? 'text-red-600 animate-pulse'
-                                : 'text-[#C05A3E]'
+                                : 'text-[#A8452C]'
                         }`}
                     />
 
@@ -921,7 +941,7 @@ return (
                             <button
                                 type="button"
                                 onClick={startVoiceRecording}
-                                className="px-4 py-2 rounded-lg bg-[#C05A3E] text-white text-xs font-bold flex items-center gap-2 hover:bg-[#A0452B] shadow-sm"
+                                className="px-4 py-2 rounded-lg bg-[#A8452C] text-white text-xs font-bold flex items-center gap-2 hover:bg-[#A0452B] shadow-sm"
                             >
                                 <Mic className="w-4 h-4" />
                                 <span>Start Recording</span>
@@ -943,7 +963,7 @@ return (
             {importSource === 'desktop' && (
                 <div
                     onClick={() => desktopInputRef.current?.click()}
-                    className="border-2 border-dashed border-[#2D1E18]/20 hover:border-[#C05A3E] rounded-lg p-5 text-center cursor-pointer transition-colors bg-[#FAF4EB]/50"
+                    className="border-2 border-dashed border-[#2D1E18]/20 hover:border-[#A8452C] rounded-lg p-5 text-center cursor-pointer transition-colors bg-[#FAF4EB]/50"
                 >
                     <input
                         ref={desktopInputRef}
@@ -953,7 +973,7 @@ return (
                         onChange={handleFileUpload}
                     />
 
-                    <HardDrive className="w-8 h-8 text-[#C05A3E] mx-auto mb-2" />
+                    <HardDrive className="w-8 h-8 text-[#A8452C] mx-auto mb-2" />
 
                     <div className="text-xs font-bold text-[#2D1E18]">
                         Click to select Audio, Video, or Image from Desktop
@@ -968,7 +988,7 @@ return (
             {importSource === 'gallery' && (
                 <div
                     onClick={() => galleryInputRef.current?.click()}
-                    className="border-2 border-dashed border-[#2D1E18]/20 hover:border-[#C05A3E] rounded-lg p-5 text-center cursor-pointer transition-colors bg-[#FAF4EB]/50"
+                    className="border-2 border-dashed border-[#2D1E18]/20 hover:border-[#A8452C] rounded-lg p-5 text-center cursor-pointer transition-colors bg-[#FAF4EB]/50"
                 >
                     <input
                         ref={galleryInputRef}
@@ -979,7 +999,7 @@ return (
                         onChange={handleFileUpload}
                     />
 
-                    <Smartphone className="w-8 h-8 text-[#C05A3E] mx-auto mb-2" />
+                    <Smartphone className="w-8 h-8 text-[#A8452C] mx-auto mb-2" />
 
                     <div className="text-xs font-bold text-[#2D1E18]">
                         Open Device Photo / Video Gallery
@@ -1003,7 +1023,7 @@ return (
                             value={driveUrlInput}
                             onChange={(e) => setDriveUrlInput(e.target.value)}
                             placeholder="https://drive.google.com/file/d/..."
-                            className="flex-1 bg-white border border-[#2D1E18]/20 rounded px-3 py-2 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none"
+                            className="flex-1 bg-white border border-[#2D1E18]/20 rounded px-3 py-2 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none"
                         />
 
                         <button
@@ -1033,13 +1053,19 @@ return (
                             })
                         }
                         placeholder="https://images.unsplash.com/... or https://domain.com/audio.mp3"
-                        className="w-full bg-white border border-[#2D1E18]/20 rounded px-3 py-2 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none"
+                        className="w-full bg-white border border-[#2D1E18]/20 rounded px-3 py-2 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none"
                     />
                 </div>
             )}
         </div>
     )}
 </div>
+
+{submitError && (
+    <p role="alert" className="text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded p-2.5">
+        {submitError}
+    </p>
+)}
 
 <div className="pt-3 border-t border-[#2D1E18]/15 flex items-center justify-end gap-3">
     <button
@@ -1052,10 +1078,11 @@ return (
 
     <button
         type="submit"
-        className="px-6 py-2.5 rounded bg-[#C05A3E] text-[#FAF4EB] font-bold text-xs uppercase tracking-wider hover:bg-[#9A3B1B] flex items-center gap-2"
+        disabled={isSubmitting}
+        className="px-6 py-2.5 rounded bg-[#A8452C] text-[#FAF4EB] font-bold text-xs uppercase tracking-wider hover:bg-[#9A3B1B] flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
     >
         <Send className="w-4 h-4" />
-        Publish Contribution
+        {isSubmitting ? 'Sending...' : 'Submit for Review'}
     </button>
 </div>
 </form>
@@ -1136,7 +1163,7 @@ return (
                         <select
                             value={reportReason}
                             onChange={(e) => setReportReason(e.target.value)}
-                            className="w-full bg-white border border-[#2D1E18]/20 rounded-lg p-2.5 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none font-medium"
+                            className="w-full bg-white border border-[#2D1E18]/20 rounded-lg p-2.5 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none font-medium"
                         >
                             <option value="Hate Speech or Harassment">
                                 Hate Speech, Offensive, or Harassment
@@ -1177,7 +1204,7 @@ return (
                             value={reportDetails}
                             onChange={(e) => setReportDetails(e.target.value)}
                             placeholder="Provide any context..."
-                            className="w-full bg-white border border-[#2D1E18]/20 rounded-lg p-2.5 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none"
+                            className="w-full bg-white border border-[#2D1E18]/20 rounded-lg p-2.5 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none"
                         />
                     </div>
 
@@ -1187,7 +1214,7 @@ return (
                             id="reportHideContrib"
                             checked={reportAlsoHide}
                             onChange={(e) => setReportAlsoHide(e.target.checked)}
-                            className="w-4 h-4 accent-[#C05A3E] rounded cursor-pointer"
+                            className="w-4 h-4 accent-[#A8452C] rounded cursor-pointer"
                         />
 
                         <label
@@ -1216,50 +1243,6 @@ return (
                     </div>
                 </form>
             )}
-        </div>
-    </div>
-)}
-
-{deleteTarget && (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div className="bg-[#FAF4EB] border-2 border-[#2D1E18] rounded-2xl max-w-sm w-full p-6 relative shadow-2xl space-y-4 text-center">
-            <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto border border-rose-300">
-                <Trash2 className="w-6 h-6" />
-            </div>
-
-            <h4 className="font-serif text-lg font-bold text-[#2D1E18]">
-                Remove Contribution?
-            </h4>
-
-            <p className="text-xs text-[#4A3B34] leading-relaxed">
-                Are you sure you want to delete{' '}
-                <strong className="text-[#2D1E18]">
-                    &quot;{deleteTarget.title}&quot;
-                </strong>
-                ? This will remove it from the community archive.
-            </p>
-
-            <div className="flex items-center justify-center gap-3 pt-2">
-                <button
-                    onClick={() => setDeleteTarget(null)}
-                    className="px-4 py-2 rounded-lg bg-white border border-[#2D1E18]/20 text-[#2D1E18] font-bold text-xs uppercase"
-                >
-                    Cancel
-                </button>
-
-                <button
-                    onClick={() => {
-                        if (deleteTarget && onRemoveContribution) {
-                            onRemoveContribution(deleteTarget.id);
-                        }
-
-                        setDeleteTarget(null);
-                    }}
-                    className="px-5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-colors"
-                >
-                    Confirm Remove
-                </button>
-            </div>
         </div>
     </div>
 )}

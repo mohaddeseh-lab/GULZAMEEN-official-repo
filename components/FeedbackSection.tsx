@@ -69,6 +69,7 @@ export const FeedbackSection: React.FC<FeedbackSectionProps> = ({
                 <button
                   key={star}
                   type="button"
+                  aria-label={`Rate ${star} out of 5`}
                   onClick={() => setRating(star)}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(0)}
@@ -82,43 +83,43 @@ export const FeedbackSection: React.FC<FeedbackSectionProps> = ({
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
   <div>
     <label className="block text-xs font-bold text-[#1A100C] mb-1.5 uppercase tracking-wider">
-      Full Name <span className="text-[#C2593F]">*</span>
+      Full Name <span className="text-[#A8452C]">*</span>
     </label>
 
     <div className="relative">
-      <User className="w-4 h-4 text-[#C2593F] absolute left-3 top-3" />
+      <User className="w-4 h-4 text-[#A8452C] absolute left-3 top-3" />
       <input
         type="text"
         required
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="e.g. Dr. Baloch / Jahan"
-        className="w-full bg-white border border-[#1A100C]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2B231F] focus:border-[#C2593F] focus:outline-none"
+        className="w-full bg-white border border-[#1A100C]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2B231F] focus:border-[#A8452C] focus:outline-none"
       />
     </div>
   </div>
 
   <div>
     <label className="block text-xs font-bold text-[#1A100C] mb-1.5 uppercase tracking-wider">
-      Email Address <span className="text-[#C2593F]">*</span>
+      Email Address <span className="text-[#A8452C]">*</span>
     </label>
 
     <div className="relative">
-      <Mail className="w-4 h-4 text-[#C2593F] absolute left-3 top-3" />
+      <Mail className="w-4 h-4 text-[#A8452C] absolute left-3 top-3" />
       <input
         type="email"
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@domain.com"
-        className="w-full bg-white border border-[#1A100C]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2B231F] focus:border-[#C2593F] focus:outline-none"
+        className="w-full bg-white border border-[#1A100C]/20 rounded pl-9 pr-3 py-2.5 text-xs text-[#2B231F] focus:border-[#A8452C] focus:outline-none"
       />
     </div>
   </div>
 </div>
 <div>
   <label className="block text-xs font-bold text-[#1A100C] mb-1.5 uppercase tracking-wider">
-    Suggestions, Corrections, or Cultural Notes <span className="text-[#C2593F]">*</span>
+    Suggestions, Corrections, or Cultural Notes <span className="text-[#A8452C]">*</span>
   </label>
 
   <textarea
@@ -127,14 +128,14 @@ export const FeedbackSection: React.FC<FeedbackSectionProps> = ({
     value={suggestions}
     onChange={(e) => setSuggestions(e.target.value)}
     placeholder="Share your thoughts on missing stories, dialect nuances, or platform features..."
-    className="w-full bg-white border border-[#1A100C]/20 rounded p-3 text-xs text-[#2B231F] focus:border-[#C2593F] focus:outline-none"
+    className="w-full bg-white border border-[#1A100C]/20 rounded p-3 text-xs text-[#2B231F] focus:border-[#A8452C] focus:outline-none"
   />
 </div>
 
 <div className="text-center pt-2">
   <button
     type="submit"
-    className="px-8 py-3 rounded-lg bg-gradient-to-r from-[#C2593F] to-[#9A3B1B] text-[#FAF4EE] font-bold text-xs uppercase tracking-wider hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all shadow-md inline-flex items-center gap-2"
+    className="px-8 py-3 rounded-lg bg-gradient-to-r from-[#A8452C] to-[#9A3B1B] text-[#FAF4EE] font-bold text-xs uppercase tracking-wider hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all shadow-md inline-flex items-center gap-2"
   >
     <Send className="w-4 h-4" />
     Submit Feedback to Site Administrator
@@ -146,7 +147,7 @@ export const FeedbackSection: React.FC<FeedbackSectionProps> = ({
 
 {showToast && (
   <div className="fixed bottom-6 right-6 z-50 bg-[#FAF4EE] border-2 border-[#1A100C] text-[#2B231F] p-4 rounded-xl shadow-2xl flex items-center gap-3">
-    <CheckCircle className="w-6 h-6 text-[#C2593F] flex-shrink-0" />
+    <CheckCircle className="w-6 h-6 text-[#A8452C] flex-shrink-0" />
 
     <div>
       <div className="font-serif font-bold text-sm text-[#1A100C]">

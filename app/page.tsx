@@ -1,61 +1,27 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CulturalItem, Contribution, RegionId, CategoryId, FeedbackData } from '../lib/types';
+import dynamic from 'next/dynamic';
+import { CulturalItem, Contribution, ContributionStatus, RegionId, CategoryId, FeedbackData } from '../lib/types';
 import { INITIAL_CULTURAL_ITEMS } from '../lib/initialData';
 import { supabase } from '../lib/supabase';
+import { rowToItem, FileRow } from '../lib/heritage';
 import { Navbar } from '../components/Navbar';
 import { Hero } from '../components/Hero';
-import { RegionExplorer } from '../components/RegionExplorer';
-import { CulturalHistory } from '../components/CulturalHistory';
-import { NetworkGraph } from '../components/NetworkGraph';
-import { AnalyticsSection } from '../components/AnalyticsSection';
-import { ContributionHub } from '../components/ContributionHub';
-import { GamesSection } from '../components/GamesSection';
-import { FeedbackSection } from '../components/FeedbackSection';
-import { Footer } from '../components/Footer';
+
+// CHANGED: sections below the first screen are loaded as separate chunks, so the first
+// screen has much less JavaScript to run (this is what lowers "Total Blocking Time").
+const RegionExplorer = dynamic(() => import('../components/RegionExplorer').then((m) => m.RegionExplorer));
+const CulturalHistory = dynamic(() => import('../components/CulturalHistory').then((m) => m.CulturalHistory));
+const NetworkGraph = dynamic(() => import('../components/NetworkGraph').then((m) => m.NetworkGraph));
+const AnalyticsSection = dynamic(() => import('../components/AnalyticsSection').then((m) => m.AnalyticsSection));
+const ContributionHub = dynamic(() => import('../components/ContributionHub').then((m) => m.ContributionHub));
+const GamesSection = dynamic(() => import('../components/GamesSection').then((m) => m.GamesSection));
+const FeedbackSection = dynamic(() => import('../components/FeedbackSection').then((m) => m.FeedbackSection));
+const BalochiTranslator = dynamic(() => import('../components/BalochiTranslator').then((m) => m.BalochiTranslator));
+const Footer = dynamic(() => import('../components/Footer').then((m) => m.Footer));
 
 const MAX_MEDIA_SIZE = 50 * 1024 * 1024;
-
-interface FileRow {
-  id: string;
-  title: string | null;
-  description: string | null;
-  contributor_name: string | null;
-  region: RegionId | null;
-  category: CategoryId | null;
-  r2_key: string | null;
-  mime_type: string | null;
-  created_at: string;
-}
-
-// Turns an approved Supabase row into the shape the page components expect
-function rowToItem(row: FileRow): CulturalItem {
-  const mime = row.mime_type || '';
-  const hasMedia = Boolean(row.r2_key);
-  const link = `/api/media/${row.id}`;
-  const isAudio = mime.startsWith('audio/');
-  return {
-    id: row.id,
-    title: row.title || '',
-    region: row.region || 'all',
-    category: row.category || 'kissa',
-    description: row.description || '',
-    contributor: row.contributor_name || 'Anonymous',
-    createdAt: new Date(row.created_at).getTime(),
-    audioUrl: hasMedia && isAudio ? link : undefined,
-    mediaUrl: hasMedia && !isAudio ? link : undefined,
-    mediaType: !hasMedia
-      ? undefined
-      : isAudio
-        ? 'audio'
-        : mime.startsWith('video/')
-          ? 'video'
-          : mime.startsWith('image/')
-            ? 'image'
-            : 'other',
-  };
-}
 
 // Saves to the visitor's own browser. Never crashes if storage is full or blocked.
 function saveLocal(key: string, value: unknown) {
@@ -123,7 +89,17 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (loaded) saveLocal('gz_contributions_v1', contributions);
+    // CHANGED: never store big data: URLs (photo/audio bytes) in localStorage, it overflows
+    if (loaded) {
+      saveLocal(
+        'gz_contributions_v1',
+        contributions.map((c) => ({
+          ...c,
+          mediaUrl: c.mediaUrl?.startsWith('data:') ? undefined : c.mediaUrl,
+          audioUrl: c.audioUrl?.startsWith('data:') ? undefined : c.audioUrl,
+        }))
+      );
+    }
   }, [contributions, loaded]);
 
   // Everyone sees the contributions the admin has approved
@@ -144,6 +120,73 @@ export default function Home() {
     loadApproved();
   }, []);
 
+  // NEW: keep each of this visitor's submissions in step with its real status
+  // (pending / approved / removed) instead of always showing "Verified".
+  useEffect(() => {
+    if (!loaded) return;
+    let cancelled = false;
+
+    async function syncStatuses() {
+      if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+      const ids = contributions.map((c) => c.serverId).filter((id): id is string => Boolean(id));
+      let statuses: Record<string, ContributionStatus> = {};
+      if (ids.length > 0) {
+        try {
+          const res = await fetch('/api/contribution-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids }),
+          });
+          if (res.ok) statuses = (await res.json()).statuses || {};
+        } catch {
+          return; // offline or network error: keep what we have
+        }
+      }
+      if (cancelled) return;
+
+      setContributions((prev) => {
+        let changed = false;
+        const next = prev.map((c) => {
+          // Older entries saved before this fix have no server id: match them to an
+          // approved item with the same title and contributor name.
+          if (!c.serverId) {
+            const match = approvedItems.find(
+              (a) =>
+                a.title.trim().toLowerCase() === c.title.trim().toLowerCase() &&
+                (a.contributor || 'Anonymous') === (c.contributorName || 'Anonymous')
+            );
+            if (match) {
+              changed = true;
+              return { ...c, serverId: match.id, status: 'approved' as ContributionStatus };
+            }
+            return c.status ? c : { ...c, status: 'pending' as ContributionStatus };
+          }
+          const status = statuses[c.serverId];
+          if (status && status !== c.status) {
+            changed = true;
+            return { ...c, status };
+          }
+          return c;
+        });
+        return changed ? next : prev;
+      });
+    }
+
+    syncStatuses();
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') syncStatuses();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('online', syncStatuses);
+    return () => {
+      cancelled = true;
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('online', syncStatuses);
+    };
+    // Re-run when the list of server ids or the approved items change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, approvedItems, contributions.map((c) => c.serverId ?? '').join(',')]);
+
   const culturalItems: CulturalItem[] = [...approvedItems, ...INITIAL_CULTURAL_ITEMS];
 
   const handleOpenContributeModal = (region?: RegionId, category?: CategoryId) => {
@@ -152,11 +195,16 @@ export default function Home() {
     setIsContributeModalOpen(true);
   };
 
-  const handleAddContribution = async (newContrib: Omit<Contribution, 'id' | 'createdAt'>) => {
+  // CHANGED: returns an error message (or null on success) so the form can show the
+  // success card only when the upload really worked. No more browser alert() popups.
+  const handleAddContribution = async (
+    newContrib: Omit<Contribution, 'id' | 'createdAt'>
+  ): Promise<string | null> => {
+    let serverId: string | undefined;
     try {
       const source = newContrib.audioUrl || newContrib.mediaUrl;
       const media = source && source.startsWith('data:') ? await uploadMedia(source) : null;
-      await postSubmit({
+      const result = await postSubmit({
         type: 'contribution',
         title: newContrib.title,
         description: newContrib.description,
@@ -168,20 +216,25 @@ export default function Home() {
         size: media?.size,
         filename: media?.filename,
       });
+      serverId = result.id;
     } catch (e) {
       console.error(e);
-      window.alert(e instanceof Error ? e.message : 'Could not submit. Please try again.');
-      return;
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        return 'You are offline. Please reconnect to the internet and try again.';
+      }
+      return e instanceof Error ? e.message : 'Could not submit. Please try again.';
     }
 
     const timestamp = Date.now();
     const contributionObj: Contribution = {
       ...newContrib,
       id: `contrib-${timestamp}`,
+      serverId,
+      status: 'pending',
       createdAt: timestamp,
     };
     setContributions((prev) => [contributionObj, ...prev]);
-    window.alert('Thank you! Your contribution was sent and will appear on the site after review.');
+    return null;
   };
 
   const handleRemoveCulturalItem = () => {
@@ -258,6 +311,8 @@ export default function Home() {
         defaultRegion={modalDefaultRegion}
         defaultCategory={modalDefaultCategory}
       />
+
+      <BalochiTranslator />
 
       <GamesSection />
 

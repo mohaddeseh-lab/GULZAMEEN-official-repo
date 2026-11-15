@@ -5,16 +5,17 @@ export const REGIONS: RegionInfo[] = [
   {
     id: 'eastern',
     name: 'Eastern Balochistan',
-    tagline: 'Coastal Plains & Woven Epic Songs',
+    tagline: 'woven storytelling.',
     description:
-      'Home to the Suleiman mountain foothills, fertile river valleys, and historic trade routes where oral epics and woven storytelling flourished through generations of balladeers.',
+'Eastern Baloch traditions shaped by trade, and woven storytelling.',
+
     highlights: [
-      'Suleiman Mountain Oral Traditions',
-      'Rind & Lashari Epic Ballads',
-      'Historic Kachhi Plain Pottery',
+      '',
+      '',
+      '',
     ],
-    climate: 'Arid Plains & Mountainous Valley',
-    famousArt: 'Deep Ruby Thread Needlework & Damboor Ballads',
+    climate: '',
+    famousArt: '',
     mapCoordinates: {
       x: 70,
       y: 35,
@@ -25,16 +26,16 @@ export const REGIONS: RegionInfo[] = [
   {
     id: 'western',
     name: 'Western Balochistan',
-    tagline: 'Highland Customs & Suroz Melodies',
+    tagline: 'Highland Customs',
     description:
-      'Highland plateau characterized by cool mountain breezes, ancient Chaghi & Kharan oasis craft, Suroz bow lute performances, and enduring nomadic pastoral customs.',
+      'Highland plateau characterized by cool mountain breezes',
     highlights: [
-      'Suroz Bow-Lute Performances',
-      'Chaghi Desert Nomadic Weaving',
-      'Zahirok Longing Songs',
+      '',
+      '',
+      '',
     ],
-    climate: 'Highland Plateau & Cold Desert',
-    famousArt: 'Kapuk Starburst Mirrorwork & Suroz Bow Music',
+    climate: '',
+    famousArt: '',
     mapCoordinates: {
       x: 30,
       y: 30,
@@ -50,11 +51,11 @@ export const REGIONS: RegionInfo[] = [
       'Stretching along the Arabian Sea and the lush Makran palm oases, celebrated for sea-faring folk chants, Gwadar market rhythms, and intricate Pashk dress embroidery.',
     highlights: [
       'Makran Coast Sea Shanties',
-      'Gwadar Dhol Beats & Lawaa Dance',
-      'Lush Date Palm Harvest Folk Songs',
+      'Dochaapi',
+      'full of natural resources',
     ],
     climate: 'Subtropical Coastal & Palm Oasis',
-    famousArt: 'Full-Frontal Pashk & Jup Intricate Silk Panels',
+    famousArt: 'balochi Pashk & traditional music ',
     mapCoordinates: {
       x: 45,
       y: 70,
@@ -287,6 +288,62 @@ export const REGIONS: RegionInfo[] = [
     correctAnswer: 0,
     explanation:
       'The Dambur (or Dambura) provides a hypnotic rhythmic drone that underpins traditional Balochi vocal ballads and instrumental solos.',
+  },
+    {
+    id: 21,
+    question: 'Which Balochi instrument is shown in this picture?',
+    imageUrl: '/quiz/benju.png',
+    options: ['Benju', 'Suroz', 'Chang', 'Damboor'],
+    correctAnswer: 0,
+    explanation: '[One sentence about the Benju: what it is and how it is played.]',
+  },
+  {
+    id: 22,
+    question: 'Listen to the clip. Which instrument is playing?',
+    audioUrl: '/quiz/benju.mp3',
+    options: ['Suroz', 'Chang', 'Benju', 'Damboor'],
+    correctAnswer: 2,
+    explanation: '[One sentence about the sound of the Benju.]',
+  },
+  {
+    id: 23,
+    question: 'Which Balochi instrument is shown in this picture?',
+    imageUrl: '/quiz/surooz.png',
+    options: ['Chang', 'Suroz', 'Benju', 'Damboor'],
+    correctAnswer: 1,
+    explanation: '[One sentence about the Suroz.]',
+  },
+  {
+    id: 24,
+    question: 'Listen to the clip. Which instrument is playing?',
+    audioUrl: '/quiz/surooz.mp3',
+    options: ['Suroz', 'Damboor', 'Chang', 'Benju'],
+    correctAnswer: 0,
+    explanation: '[One sentence about the sound of the Suroz.]',
+  },
+  {
+    id: 25,
+    question: 'Listen to the clip. Which instrument is playing?',
+    audioUrl: '/quiz/chang.mp3',
+    options: ['Benju', 'Suroz', 'Damboor', 'Chang'],
+    correctAnswer: 3,
+    explanation: '[One sentence about the Chang.]',
+  },
+  {
+    id: 26,
+    question: 'which dish is this shown in given image',
+    imageUrl: '/quiz/changal.png',
+    options: ['madar', 'changal', 'masheek', 'maashbatt'],
+    correctAnswer: 1,
+    explanation: 'the dish shown in image is changal',
+  },
+  {
+    id: 107,
+    question: 'what is this shown in image',
+    imageUrl: '/quiz/madar.png',
+    options: ['madar', 'changal', 'masheek', 'maashbatt'],
+    correctAnswer: 0,
+    explanation: 'the dish shown in image is madar',
   },
 ];
 
@@ -676,7 +733,7 @@ export const INITIAL_CULTURAL_ITEMS: CulturalItem[] = [
   },
   {
     id: 'south-4',
-    title: 'Legend of the Gwadar Pearl Diver',
+    title: '',
     balochiTitle: 'Gwadar e Gohar e Kissa',
     region: 'southern',
     category: 'kissa',

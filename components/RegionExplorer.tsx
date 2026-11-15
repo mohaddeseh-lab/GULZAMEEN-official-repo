@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { CulturalItem, RegionId, CategoryId } from '../lib/types';
 import { REGIONS } from '../lib/initialData';
 import {
@@ -302,8 +303,8 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
           {/* Interactive Map */}
           <div className="lg:col-span-7 bg-white rounded-2xl p-6 border border-[#2D1E18]/15 shadow-md relative overflow-hidden">
             <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#2D1E18]/15">
-              <span className="text-xs font-serif font-bold tracking-wider uppercase text-[#C05A3E] flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#C05A3E] animate-ping" />
+              <span className="text-xs font-serif font-bold tracking-wider uppercase text-[#A8452C] flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#A8452C] animate-ping" />
                 Balochistan Cultural Map
               </span>
 
@@ -319,7 +320,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
               >
                 <defs>
                   <linearGradient id="eastGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#C05A3E" stopOpacity="0.3" />
+                    <stop offset="0%" stopColor="#A8452C" stopOpacity="0.3" />
                     <stop offset="100%" stopColor="#F5E6D3" stopOpacity="0.8" />
                   </linearGradient>
 
@@ -346,7 +347,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                 <path
                   d="M 220 40 L 440 30 L 450 180 L 320 220 L 250 160 Z"
                   fill="url(#eastGrad)"
-                  stroke={selectedRegion === 'eastern' ? '#D4AF37' : '#C05A3E'}
+                  stroke={selectedRegion === 'eastern' ? '#D4AF37' : '#A8452C'}
                   strokeWidth={selectedRegion === 'eastern' ? 3.5 : 1.5}
                   className="cursor-pointer hover:opacity-80 transition-all duration-300"
                   onClick={() => setSelectedRegion('eastern')}
@@ -376,7 +377,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                     cx="140"
                     cy="120"
                     r="6"
-                    fill={selectedRegion === 'western' ? '#D4AF37' : '#C05A3E'}
+                    fill={selectedRegion === 'western' ? '#D4AF37' : '#A8452C'}
                     stroke="#FFFFFF"
                     strokeWidth="2"
                   />
@@ -395,7 +396,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                     x="140"
                     y="160"
                     textAnchor="middle"
-                    fill="#C05A3E"
+                    fill="#A8452C"
                     fontSize="9"
                     fontWeight="bold"
                     fontFamily="sans-serif"
@@ -412,14 +413,14 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                     cx="330"
                     cy="110"
                     r={selectedRegion === 'eastern' ? 14 : 10}
-                    fill="#C05A3E"
+                    fill="#A8452C"
                     opacity="0.4"
                   />
                   <circle
                     cx="330"
                     cy="110"
                     r="6"
-                    fill={selectedRegion === 'eastern' ? '#D4AF37' : '#C05A3E'}
+                    fill={selectedRegion === 'eastern' ? '#D4AF37' : '#A8452C'}
                     stroke="#FFFFFF"
                     strokeWidth="2"
                   />
@@ -438,7 +439,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                     x="330"
                     y="150"
                     textAnchor="middle"
-                    fill="#C05A3E"
+                    fill="#A8452C"
                     fontSize="9"
                     fontWeight="bold"
                     fontFamily="sans-serif"
@@ -481,7 +482,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                     x="250"
                     y="295"
                     textAnchor="middle"
-                    fill="#C05A3E"
+                    fill="#A8452C"
                     fontSize="9"
                     fontWeight="bold"
                     fontFamily="sans-serif"
@@ -508,7 +509,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                 <h3 className="font-serif text-xl font-bold text-[#2D1E18]">
                   {currentRegionInfo.name}
                 </h3>
-                <span className="text-xs uppercase tracking-wider font-semibold text-[#C05A3E] px-2.5 py-1 rounded bg-[#C05A3E]/10">
+                <span className="text-xs uppercase tracking-wider font-semibold text-[#A8452C] px-2.5 py-1 rounded bg-[#A8452C]/10">
                   {currentRegionInfo.climate}
                 </span>
               </div>
@@ -533,7 +534,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                       className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold transition-all border ${
                         isSelected
                           ? 'bg-[#2D1E18] text-[#D4AF37] border-[#2D1E18] shadow-sm'
-                          : 'bg-[#FAF4EB] text-[#4A3B34] border-[#2D1E18]/10 hover:border-[#C05A3E]'
+                          : 'bg-[#FAF4EB] text-[#4A3B34] border-[#2D1E18]/10 hover:border-[#A8452C]'
                       }`}
                     >
                       <Icon className="w-4 h-4 shrink-0" />
@@ -555,7 +556,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
               placeholder="Search traditions, tales..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-[#2D1E18]/20 rounded-xl pl-9 pr-4 py-2.5 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none shadow-sm"
+              className="w-full bg-white border border-[#2D1E18]/20 rounded-xl pl-9 pr-4 py-2.5 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none shadow-sm"
             />
           </div>
 
@@ -578,7 +579,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
         {/* Cultural Items Grid */}
         <div className="mt-6">
           {filteredItems.length === 0 ? (
-            <div className="text-center py-12 px-4 bg-[#FAF4EB] rounded-xl border border-dashed border-[#C05A3E]/40 space-y-3">
+            <div className="text-center py-12 px-4 bg-[#FAF4EB] rounded-xl border border-dashed border-[#A8452C]/40 space-y-3">
               <p className="text-sm text-[#4A3B34] font-medium">
                 {selectedCategory === 'saved'
                   ? 'You have not saved any heritage items yet. Click the heart icon on any story card to save it!'
@@ -605,7 +606,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                 return (
                   <div
                     key={item.id}
-                    className="bg-[#FAF4EB] rounded-xl p-5 border border-[#2D1E18]/15 hover:border-[#C05A3E] transition-all duration-300 flex flex-col justify-between group shadow-sm hover:shadow-md relative overflow-hidden"
+                    className="bg-[#FAF4EB] rounded-xl p-5 border border-[#2D1E18]/15 hover:border-[#A8452C] transition-all duration-300 flex flex-col justify-between group shadow-sm hover:shadow-md relative overflow-hidden"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-2">
@@ -615,14 +616,14 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                               item.category}
                           </span>
                           {item.region === 'all' && (
-                            <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#C05A3E] text-white">
+                            <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#A8452C] text-white">
                               All Regions
                             </span>
                           )}
                         </div>
                         <div className="flex items-center gap-1.5">
                           {item.balochiTitle && (
-                            <span className="text-xs text-[#C05A3E] font-bold">
+                            <span className="text-xs text-[#A8452C] font-bold">
                               {item.balochiTitle}
                             </span>
                           )}
@@ -630,14 +631,15 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                             onClick={(e) => toggleBookmark(item.id, e)}
                             className={`p-1.5 rounded-full transition-transform active:scale-75 ${
                               isBookmarked
-                                ? 'text-[#C05A3E] bg-[#C05A3E]/10'
-                                : 'text-[#2D1E18]/40 hover:text-[#C05A3E]'
+                                ? 'text-[#A8452C] bg-[#A8452C]/10'
+                                : 'text-[#2D1E18]/40 hover:text-[#A8452C]'
                             }`}
                             title={isBookmarked ? 'Remove Bookmark' : 'Save Story'}
+                            aria-label={isBookmarked ? 'Remove Bookmark' : 'Save Story'}
                           >
                             <Heart
                               className={`w-4 h-4 ${
-                                isBookmarked ? 'fill-[#C05A3E]' : ''
+                                isBookmarked ? 'fill-[#A8452C]' : ''
                               }`}
                             />
                           </button>
@@ -645,6 +647,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                             onClick={(e) => handleOpenReportModal(item, e)}
                             className="p-1.5 rounded-full text-[#2D1E18]/40 hover:text-amber-600 hover:bg-amber-100/60 transition-colors"
                             title="Report Harmful Content"
+                            aria-label="Report Harmful Content"
                           >
                             <Flag className="w-4 h-4" />
                           </button>
@@ -652,13 +655,14 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                             onClick={(e) => handleOpenDeleteModal(item, e)}
                             className="p-1.5 rounded-full text-[#2D1E18]/40 hover:text-rose-600 hover:bg-rose-100/60 transition-colors"
                             title="Remove Content"
+                            aria-label="Remove Content"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
 
-                      <h4 className="font-serif text-lg font-bold text-[#2D1E18] group-hover:text-[#C05A3E] transition-colors leading-snug">
+                      <h4 className="font-serif text-lg font-bold text-[#2D1E18] group-hover:text-[#A8452C] transition-colors leading-snug">
                         {item.title}
                       </h4>
 
@@ -670,7 +674,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                             /\.(mp3|wav|ogg|m4a|aac|webm)(\?.*)?$/i
                           ) !== null)) ? (
                         <div className="mt-3 p-3 rounded-lg bg-white border border-[#2D1E18]/15 shadow-sm">
-                          <div className="text-[11px] font-bold text-[#C05A3E] mb-1.5 flex items-center gap-1.5">
+                          <div className="text-[11px] font-bold text-[#A8452C] mb-1.5 flex items-center gap-1.5">
                             <Volume2 className="w-3.5 h-3.5" />
                             <span>Attached Audio Performance:</span>
                           </div>
@@ -685,7 +689,11 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                           <img
                             src={item.mediaUrl}
                             alt={item.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+ decoding="async"
+ width={680}
+ height={380}
+ className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             referrerPolicy="no-referrer"
                           />
                         </div>
@@ -720,15 +728,15 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                               </div>
                               <div className="w-full bg-[#F5E6D3] h-1.5 rounded-full mt-1 overflow-hidden">
                                 <div
-                                  className={`h-full bg-[#C05A3E] transition-all duration-500 ${
+                                  className={`h-full w-full origin-left bg-[#A8452C] transition-transform duration-500 ${
                                     isPlayingAudio === item.id
-                                      ? 'w-2/3 animate-pulse'
-                                      : 'w-0'
+                                      ? 'scale-x-[0.66] animate-pulse'
+                                      : 'scale-x-0'
                                   }`}
                                 />
                               </div>
                             </div>
-                            <Volume2 className="w-4 h-4 text-[#C05A3E]" />
+                            <Volume2 className="w-4 h-4 text-[#A8452C]" />
                           </div>
                         )}
 
@@ -738,7 +746,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                             {item.patternMotifs.map((motif, i) => (
                               <span
                                 key={i}
-                                className="text-[10px] bg-white text-[#C05A3E] font-semibold px-2 py-0.5 rounded border border-[#2D1E18]/10"
+                                className="text-[10px] bg-white text-[#A8452C] font-semibold px-2 py-0.5 rounded border border-[#2D1E18]/10"
                               >
                                 ❖ {motif}
                               </span>
@@ -747,7 +755,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                         )}
 
                       {item.translation && (
-                        <div className="mt-3 p-2.5 rounded-lg bg-white border-l-4 border-[#C05A3E] text-xs text-[#2D1E18] italic shadow-sm">
+                        <div className="mt-3 p-2.5 rounded-lg bg-white border-l-4 border-[#A8452C] text-xs text-[#2D1E18] italic shadow-sm">
                           &quot;{item.translation}&quot;
                         </div>
                       )}
@@ -767,17 +775,19 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                               e
                             )
                           }
-                          className="p-1.5 rounded text-[#2D1E18]/70 hover:text-[#C05A3E] hover:bg-[#C05A3E]/10 transition-colors"
+                          className="p-1.5 rounded text-[#2D1E18]/70 hover:text-[#A8452C] hover:bg-[#A8452C]/10 transition-colors"
                           title="Listen Aloud"
+                          aria-label="Listen Aloud"
                         >
                           <Volume2 className="w-3.5 h-3.5" />
                         </button>
-                        <button
-                          onClick={() => setActiveItemModal(item)}
-                          className="px-3 py-1.5 rounded-md bg-[#2D1E18] text-[#D4AF37] hover:bg-[#1F1410] text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 group-hover:scale-105 transition-all shadow-sm"
+                        {/* CHANGED: opens a full page instead of a popup card */}
+                        <Link
+                          href={`/heritage/${encodeURIComponent(item.id)}`}
+                          className="px-3 py-1.5 rounded-md bg-[#2D1E18] text-[#D4AF37] hover:bg-[#1F1410] text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 group-hover:scale-105 transition-transform shadow-sm"
                         >
                           Read Detail <ChevronRight className="w-3.5 h-3.5" />
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -799,7 +809,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
               <X className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2 flex-wrap pr-12">
-              <div className="inline-block px-3 py-1 rounded-md bg-[#C05A3E] text-white text-xs font-bold uppercase tracking-wider">
+              <div className="inline-block px-3 py-1 rounded-md bg-[#A8452C] text-white text-xs font-bold uppercase tracking-wider">
                 {activeItemModal.region === 'all'
                   ? 'All Regions (Pan-Balochistan)'
                   : `${activeItemModal.region} Balochistan`}{' '}
@@ -824,7 +834,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
               {activeItemModal.title}
             </h3>
             {activeItemModal.balochiTitle && (
-              <div className="text-lg text-[#C05A3E] font-semibold italic">
+              <div className="text-lg text-[#A8452C] font-semibold italic">
                 {activeItemModal.balochiTitle}
               </div>
             )}
@@ -834,7 +844,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
             {activeItemModal.details &&
               activeItemModal.details.length > 0 && (
                 <div className="space-y-2 pt-3 border-t border-[#2D1E18]/15">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#C05A3E]">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#A8452C]">
                     Key Cultural Aspects & Lore:
                   </h4>
                   <ul className="space-y-1.5 text-xs text-[#2D1E18] list-disc list-inside">
@@ -867,7 +877,11 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                 <img
                   src={activeItemModal.mediaUrl}
                   alt={activeItemModal.title}
-                  className="w-full h-full object-cover"
+                  loading="lazy"
+ decoding="async"
+ width={680}
+ height={380}
+ className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
               </div>
@@ -878,14 +892,14 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                   onClick={(e) => toggleBookmark(activeItemModal.id, e)}
                   className={`px-3.5 py-2 rounded-lg font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 border transition-all ${
                     bookmarkedIds.includes(activeItemModal.id)
-                      ? 'bg-[#C05A3E]/10 border-[#C05A3E] text-[#C05A3E]'
+                      ? 'bg-[#A8452C]/10 border-[#A8452C] text-[#A8452C]'
                       : 'bg-white border-[#2D1E18]/20 text-[#2D1E18]'
                   }`}
                 >
                   <Heart
                     className={`w-3.5 h-3.5 ${
                       bookmarkedIds.includes(activeItemModal.id)
-                        ? 'fill-[#C05A3E]'
+                        ? 'fill-[#A8452C]'
                         : ''
                     }`}
                   />
@@ -957,7 +971,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                   <select
                     value={reportReason}
                     onChange={(e) => setReportReason(e.target.value)}
-                    className="w-full bg-white border border-[#2D1E18]/20 rounded-lg p-2.5 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none font-medium"
+                    className="w-full bg-white border border-[#2D1E18]/20 rounded-lg p-2.5 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none font-medium"
                   >
                     <option value="Hate Speech or Harassment">
                       Hate Speech, Offensive, or Harassment
@@ -991,7 +1005,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                     value={reportDetails}
                     onChange={(e) => setReportDetails(e.target.value)}
                     placeholder="Provide any context to help moderation..."
-                    className="w-full bg-white border border-[#2D1E18]/20 rounded-lg p-2.5 text-xs text-[#2D1E18] focus:border-[#C05A3E] focus:outline-none"
+                    className="w-full bg-white border border-[#2D1E18]/20 rounded-lg p-2.5 text-xs text-[#2D1E18] focus:border-[#A8452C] focus:outline-none"
                   />
                 </div>
                 <div className="flex items-center gap-2 pt-1">
@@ -1000,7 +1014,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
                     id="reportHide"
                     checked={reportAlsoHide}
                     onChange={(e) => setReportAlsoHide(e.target.checked)}
-                    className="w-4 h-4 accent-[#C05A3E] rounded cursor-pointer"
+                    className="w-4 h-4 accent-[#A8452C] rounded cursor-pointer"
                   />
                   <label
                     htmlFor="reportHide"

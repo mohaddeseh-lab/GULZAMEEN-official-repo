@@ -311,11 +311,11 @@ const filteredPillars =
       <div className="mb-20">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h3 className="font-serif text-2xl font-bold text-[#1A100C] flex items-center gap-2">
-            <Scroll className="w-5 h-5 text-[#C2593F]" />
+            <Scroll className="w-5 h-5 text-[#A8452C]" />
             <span>Historical Chronology & Cultural Foundations</span>
           </h3>
 
-          <span className="text-xs font-semibold text-[#8C6D37] bg-[#D4AF37]/15 px-3 py-1 rounded-full border border-[#D4AF37]/30">
+          <span className="text-xs font-semibold text-[#6B521F] bg-[#D4AF37]/15 px-3 py-1 rounded-full border border-[#D4AF37]/30">
             Select a chapter to explore detailed heritage
           </span>
         </div>
@@ -332,7 +332,7 @@ const filteredPillars =
                   className={`w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center justify-between ${
                     isActive
                       ? 'bg-[#1A100C] text-[#F9F4EE] border-[#D4AF37] shadow-lg translate-x-1'
-                      : 'bg-white text-[#2B231F] border-[#1A100C]/15 hover:border-[#C2593F]'
+                      : 'bg-white text-[#2B231F] border-[#1A100C]/15 hover:border-[#A8452C]'
                   }`}
                 >
                   <div>
@@ -350,7 +350,7 @@ const filteredPillars =
                       className={`text-xs font-semibold mt-0.5 ${
                         isActive
                           ? 'text-[#F3E5AB]'
-                          : 'text-[#C2593F]'
+                          : 'text-[#A8452C]'
                       }`}
                     >
                       {era.timeframe}
@@ -378,7 +378,7 @@ const filteredPillars =
                 <div key={era.id} className="space-y-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#1A100C]/10 pb-4 gap-2">
                     <div>
-                      <span className="text-xs font-bold text-[#C2593F] uppercase tracking-wider">
+                      <span className="text-xs font-bold text-[#A8452C] uppercase tracking-wider">
                         Heritage Chapter
                       </span>
 
@@ -393,7 +393,7 @@ const filteredPillars =
                   </div>
 
                   {era.intro && (
-                    <p className="text-sm sm:text-base font-medium text-[#1A100C] italic bg-[#F9F4EE] p-3.5 rounded-xl border-l-4 border-[#C2593F]">
+                    <p className="text-sm sm:text-base font-medium text-[#1A100C] italic bg-[#F9F4EE] p-3.5 rounded-xl border-l-4 border-[#A8452C]">
                       {era.intro}
                     </p>
                   )}
@@ -405,7 +405,7 @@ const filteredPillars =
                         className="space-y-1.5 bg-[#FAF7F2] p-4 rounded-xl border border-[#1A100C]/10"
                       >
                         <h5 className="font-serif font-bold text-base text-[#1A100C] flex items-center gap-2">
-                          <span className="w-2 h-2 rounded-full bg-[#C2593F]"></span>
+                          <span className="w-2 h-2 rounded-full bg-[#A8452C]"></span>
                           {sub.subtitle}
                         </h5>
 
@@ -437,4 +437,4 @@ const filteredPillars =
           </div>
         </div>
       </div>
-       <div> <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"> <div> <h3 className="font-serif text-2xl font-bold text-[#1A100C] flex items-center gap-2"> <Shield className="w-5 h-5 text-[#C2593F]" /> <span>Foundational Pillars of Balochi Heritage</span> </h3> <p className="text-xs text-[#2B231F]/80 mt-1"> Explore individual facets of Balochi origins, tribal law, literature, arts, and lifestyle. </p> </div> <div className="flex items-center gap-1.5 overflow-x-auto pb-2 sm:pb-0"> {categories.map((cat) => ( <button key={cat} onClick={() => setSelectedCategoryFilter(cat)} className={`px-3 py-1 rounded-lg text-xs font-bold capitalize whitespace-nowrap transition-all ${selectedCategoryFilter === cat ? 'bg-[#1A100C] text-[#D4AF37] shadow-sm' : 'bg-white text-[#2B231F] hover:bg-[#F9F4EE] border border-[#1A100C]/10'}`} > {cat} </button> ))} </div> </div> <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> {filteredPillars.map((pillar) => { const Icon = pillar.icon; return ( <div key={pillar.id} className="bg-white rounded-xl p-6 border border-[#1A100C]/15 shadow-sm hover:shadow-md hover:border-[#C2593F] transition-all group flex flex-col justify-between" > <div className="space-y-3"> <div className="flex items-center justify-between"> <div className="w-10 h-10 rounded-lg bg-[#C2593F]/10 text-[#C2593F] flex items-center justify-center group-hover:bg-[#C2593F] group-hover:text-white transition-colors"> <Icon className="w-5 h-5" /> </div> <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-[#F9F4EE] border border-[#1A100C]/10 text-[#1A100C]"> {pillar.category} </span> </div> <h4 className="font-serif text-lg font-bold text-[#1A100C] group-hover:text-[#C2593F] transition-colors"> {pillar.title} </h4> <p className="text-xs text-[#2B231F] leading-relaxed"> {pillar.content} </p> </div> </div> ); })} </div> </div> </div> </section> ); };
+       <div> <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"> <div> <h3 className="font-serif text-2xl font-bold text-[#1A100C] flex items-center gap-2"> <Shield className="w-5 h-5 text-[#A8452C]" /> <span>Foundational Pillars of Balochi Heritage</span> </h3> <p className="text-xs text-[#2B231F]/80 mt-1"> Explore individual facets of Balochi origins, tribal law, literature, arts, and lifestyle. </p> </div> <div className="flex items-center gap-1.5 overflow-x-auto pb-2 sm:pb-0"> {categories.map((cat) => ( <button key={cat} onClick={() => setSelectedCategoryFilter(cat)} className={`px-3 py-1 rounded-lg text-xs font-bold capitalize whitespace-nowrap transition-all ${selectedCategoryFilter === cat ? 'bg-[#1A100C] text-[#D4AF37] shadow-sm' : 'bg-white text-[#2B231F] hover:bg-[#F9F4EE] border border-[#1A100C]/10'}`} > {cat} </button> ))} </div> </div> <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> {filteredPillars.map((pillar) => { const Icon = pillar.icon; return ( <div key={pillar.id} className="bg-white rounded-xl p-6 border border-[#1A100C]/15 shadow-sm hover:shadow-md hover:border-[#A8452C] transition-all group flex flex-col justify-between" > <div className="space-y-3"> <div className="flex items-center justify-between"> <div className="w-10 h-10 rounded-lg bg-[#A8452C]/10 text-[#A8452C] flex items-center justify-center group-hover:bg-[#A8452C] group-hover:text-white transition-colors"> <Icon className="w-5 h-5" /> </div> <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-[#F9F4EE] border border-[#1A100C]/10 text-[#1A100C]"> {pillar.category} </span> </div> <h4 className="font-serif text-lg font-bold text-[#1A100C] group-hover:text-[#A8452C] transition-colors"> {pillar.title} </h4> <p className="text-xs text-[#2B231F] leading-relaxed"> {pillar.content} </p> </div> </div> ); })} </div> </div> </div> </section> ); };

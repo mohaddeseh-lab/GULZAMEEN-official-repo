@@ -68,7 +68,7 @@ export const NetworkGraph: React.FC = () => {
             <defs>
               <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#C05A3E" stopOpacity="0.5" />
+                <stop offset="100%" stopColor="#A8452C" stopOpacity="0.5" />
               </linearGradient>
             </defs>
 
@@ -90,7 +90,7 @@ export const NetworkGraph: React.FC = () => {
                     y1={`${node.y}%`}
                     x2={`${targetNode.x}%`}
                     y2={`${targetNode.y}%`}
-                    stroke={isConnectedToActive ? '#C05A3E' : '#2D1E18'}
+                    stroke={isConnectedToActive ? '#A8452C' : '#2D1E18'}
                     strokeWidth={isConnectedToActive ? '2.5' : '1'}
                     strokeDasharray={isConnectedToActive ? 'none' : '4 4'}
                     opacity={isConnectedToActive ? 0.9 : 0.25}
@@ -133,8 +133,8 @@ export const NetworkGraph: React.FC = () => {
                       isCore
                         ? 'w-16 h-16 bg-[#D4AF37] text-[#2D1E18] ring-4 ring-[#D4AF37]/40'
                         : isActive
-                          ? 'w-14 h-14 bg-[#C05A3E] text-white ring-4 ring-[#D4AF37]'
-                          : 'w-12 h-12 bg-[#2D1E18] text-[#D4AF37] border-2 border-[#D4AF37] hover:border-[#C05A3E]'
+                          ? 'w-14 h-14 bg-[#A8452C] text-white ring-4 ring-[#D4AF37]'
+                          : 'w-12 h-12 bg-[#2D1E18] text-[#D4AF37] border-2 border-[#D4AF37] hover:border-[#A8452C]'
                     }`}
                   >
                     <IconComponent
@@ -170,7 +170,7 @@ export const NetworkGraph: React.FC = () => {
               <X className="w-5 h-5" />
             </button>
 
-            <span className="text-xs font-bold uppercase tracking-widest text-[#C05A3E]">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#A8452C]">
               Cultural Network Node
             </span>
 
@@ -179,7 +179,7 @@ export const NetworkGraph: React.FC = () => {
             </h3>
 
             {selectedNodeModal.balochiName && (
-              <p className="text-sm font-semibold text-[#C05A3E]">
+              <p className="text-sm font-semibold text-[#A8452C]">
                 {selectedNodeModal.balochiName}
               </p>
             )}
@@ -202,3 +202,4 @@ export const NetworkGraph: React.FC = () => {
     </section>
   );
 };
+ 

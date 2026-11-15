@@ -75,7 +75,7 @@ export const Footer: React.FC = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.name}
-                    className="rounded border border-[#D4AF37]/20 bg-[#281C16] p-2 text-[#D4AF37] transition-all hover:bg-[#C2593F] hover:text-[#F9F4EE]"
+                    className="rounded border border-[#D4AF37]/20 bg-[#281C16] p-2 text-[#D4AF37] transition-all hover:bg-[#A8452C] hover:text-[#F9F4EE]"
                   >
                     <Icon className="h-4 w-4" />
                   </a>
@@ -128,7 +128,7 @@ export const Footer: React.FC = () => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 hover:underline"
                 >
-                  <Camera className="h-3 w-3 text-[#C2593F]" />
+                  <Camera className="h-3 w-3 text-[#A8452C]" />
                   mohadeseh.badpa
                 </a>
 
@@ -138,7 +138,7 @@ export const Footer: React.FC = () => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 hover:underline"
                 >
-                  <Link2 className="h-3 w-3 text-[#C2593F]" />
+                  <Link2 className="h-3 w-3 text-[#A8452C]" />
                   mohaddeseh-lab
                 </a>
 
@@ -146,7 +146,7 @@ export const Footer: React.FC = () => {
                   href="mailto:mohaddesehbadpa0@gmail.com"
                   className="flex items-center gap-1.5 hover:underline"
                 >
-                  <Mail className="h-3 w-3 text-[#C2593F]" />
+                  <Mail className="h-3 w-3 text-[#A8452C]" />
                   mohadesehbadpa0@gmail.com
                 </a>
               </div>
@@ -162,7 +162,7 @@ export const Footer: React.FC = () => {
 
           <div className="flex items-center gap-1">
             Crafted with
-            <Heart className="h-3.5 w-3.5 fill-[#C2593F] text-[#C2593F]" />
+            <Heart className="h-3.5 w-3.5 fill-[#A8452C] text-[#A8452C]" />
             for Balochistan Heritage
           </div>
         </div>

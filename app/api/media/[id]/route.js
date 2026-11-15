@@ -34,5 +34,20 @@ export async function GET(req, { params }) {
     }),
     { expiresIn: 300 }
   )
+
+  // CHANGED: images are sent through with a long cache lifetime (the signed link itself
+  // expires after 5 minutes, so the browser could never cache it). Audio/video keep the
+  // redirect so seeking/streaming still works.
+  if ((data.mime_type || '').startsWith('image/')) {
+    const upstream = await fetch(url)
+    if (upstream.ok) {
+      return new Response(upstream.body, {
+        headers: {
+          'Content-Type': data.mime_type,
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
+      })
+    }
+  }
   return Response.redirect(url, 302)
 }

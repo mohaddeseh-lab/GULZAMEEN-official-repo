@@ -19,6 +19,9 @@ import {
   Clock,
 } from 'lucide-react';
 
+// CHANGED: seconds allowed per Quiz question and per Word Scramble word
+const GAME_SECONDS = 120;
+
 export const GamesSection: React.FC = () => {
   const [activeGameTab, setActiveGameTab] = useState<
     'quiz' | 'scramble' | 'caravan'
@@ -29,7 +32,7 @@ export const GamesSection: React.FC = () => {
   const [quizScore, setQuizScore] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [quizFinished, setQuizFinished] = useState(false);
-  const [quizTimer, setQuizTimer] = useState(10);
+  const [quizTimer, setQuizTimer] = useState(GAME_SECONDS);
 
   const currentQuestion = QUIZ_QUESTIONS[quizIdx];
 
@@ -47,7 +50,7 @@ export const GamesSection: React.FC = () => {
     if (quizIdx + 1 < QUIZ_QUESTIONS.length) {
       setQuizIdx((prev) => prev + 1);
       setSelectedOption(null);
-      setQuizTimer(10);
+      setQuizTimer(GAME_SECONDS);
     } else {
       setQuizFinished(true);
     }
@@ -58,10 +61,10 @@ export const GamesSection: React.FC = () => {
     setQuizScore(0);
     setSelectedOption(null);
     setQuizFinished(false);
-    setQuizTimer(10);
+    setQuizTimer(GAME_SECONDS);
   };
 
-  // 10-second Quiz Timer Effect
+  // Quiz Timer Effect (GAME_SECONDS per question)
   useEffect(() => {
     if (
       activeGameTab !== 'quiz' ||
@@ -92,7 +95,7 @@ export const GamesSection: React.FC = () => {
   >(null);
   const [showHint, setShowHint] = useState(false);
   const [scrambleFinished, setScrambleFinished] = useState(false);
-  const [scrambleTimer, setScrambleTimer] = useState(10);
+  const [scrambleTimer, setScrambleTimer] = useState(GAME_SECONDS);
 
   const currentScramble = WORD_SCRAMBLE_ITEMS[scrambleIdx];
 
@@ -120,7 +123,7 @@ export const GamesSection: React.FC = () => {
       setScrambleInput('');
       setScrambleFeedback(null);
       setShowHint(false);
-      setScrambleTimer(10);
+      setScrambleTimer(GAME_SECONDS);
     } else {
       setScrambleFinished(true);
     }
@@ -133,10 +136,10 @@ export const GamesSection: React.FC = () => {
     setScrambleFeedback(null);
     setShowHint(false);
     setScrambleFinished(false);
-    setScrambleTimer(10);
+    setScrambleTimer(GAME_SECONDS);
   };
 
-  // 10-second Word Scramble Timer Effect
+  // Word Scramble Timer Effect (GAME_SECONDS per word)
   useEffect(() => {
     if (
       activeGameTab !== 'scramble' ||
@@ -489,7 +492,7 @@ return (
             className={`w-4 h-4 ${
               activeGameTab === 'quiz'
                 ? 'text-[#1A100C]'
-                : 'text-[#C2593F]'
+                : 'text-[#A8452C]'
             }`}
           />
           1. Cultural Quiz (10s)
@@ -507,7 +510,7 @@ return (
             className={`w-4 h-4 ${
               activeGameTab === 'scramble'
                 ? 'text-[#1A100C]'
-                : 'text-[#C2593F]'
+                : 'text-[#A8452C]'
             }`}
           />
           2. Word Scramble (10s)
@@ -525,7 +528,7 @@ return (
             className={`w-4 h-4 ${
               activeGameTab === 'caravan'
                 ? 'text-[#1A100C]'
-                : 'text-[#C2593F]'
+                : 'text-[#A8452C]'
             }`}
           />
           3. <span className="inline-block transform -scale-x-100">🐪</span>{' '}
@@ -543,7 +546,7 @@ return (
                 Quiz Completed!
               </h3>
 
-              <p className="text-lg text-[#C2593F] font-semibold">
+              <p className="text-lg text-[#A8452C] font-semibold">
                 Your Final Score: {quizScore} /{' '}
                 {QUIZ_QUESTIONS.length * 20} Points
               </p>
@@ -572,12 +575,12 @@ return (
                 <div className="flex items-center gap-2">
                   <div
                     className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-extrabold border ${
-                      quizTimer <= 3
+                      quizTimer <= 10
                         ? 'bg-rose-100 text-rose-700 border-rose-400 animate-pulse'
                         : 'bg-[#F9F4EE] text-[#1A100C] border-[#1A100C]/15'
                     }`}
                   >
-                    <Clock className="w-3.5 h-3.5 text-[#C2593F]" />
+                    <Clock className="w-3.5 h-3.5 text-[#A8452C]" />
                     <span>{quizTimer}s</span>
                   </div>
 
@@ -589,10 +592,10 @@ return (
 
               <div className="w-full bg-[#1A100C]/10 h-2 rounded-full overflow-hidden">
                 <div
-                  className={`h-full transition-all duration-1000 ${
-                    quizTimer <= 3 ? 'bg-rose-500' : 'bg-[#D4AF37]'
+                  className={`h-full w-full origin-left transition-transform duration-1000 ease-linear ${
+                    quizTimer <= 10 ? 'bg-rose-500' : 'bg-[#D4AF37]'
                   }`}
-                  style={{ width: `${(quizTimer / 10) * 100}%` }}
+                  style={{ transform: `scaleX(${quizTimer / GAME_SECONDS})` }}
                 />
               </div>
 
@@ -606,7 +609,7 @@ return (
                   const isCorrect = idx === currentQuestion.correctAnswer;
 
                   let btnStyle =
-                    'bg-[#F9F4EE] text-[#2B231F] border-[#1A100C]/15 hover:border-[#C2593F]';
+                    'bg-[#F9F4EE] text-[#2B231F] border-[#1A100C]/15 hover:border-[#A8452C]';
 
                   if (selectedOption !== null) {
                     if (isCorrect) {
@@ -645,7 +648,7 @@ return (
                 <div className="p-3.5 rounded-xl bg-amber-100 border border-amber-500 text-amber-900 text-xs font-bold flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Clock className="w-4 h-4 text-amber-700 animate-spin" />
-                    ⏰ Time&apos;s Up! 10 seconds expired for this question.
+                    ⏰ Time&apos;s Up! {GAME_SECONDS} seconds expired for this question.
                   </span>
                 </div>
               )}
@@ -684,7 +687,7 @@ return (
                 Vocabulary Challenge Complete!
               </h3>
 
-              <p className="text-lg text-[#C2593F] font-semibold">
+              <p className="text-lg text-[#A8452C] font-semibold">
                 Your Scramble Score: {scrambleScore} Points
               </p>
 
@@ -706,12 +709,12 @@ return (
                 <div className="flex items-center gap-2">
                   <div
                     className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-extrabold border ${
-                      scrambleTimer <= 3
+                      scrambleTimer <= 10
                         ? 'bg-rose-100 text-rose-700 border-rose-400 animate-pulse'
                         : 'bg-[#F9F4EE] text-[#1A100C] border-[#1A100C]/15'
                     }`}
                   >
-                    <Clock className="w-3.5 h-3.5 text-[#C2593F]" />
+                    <Clock className="w-3.5 h-3.5 text-[#A8452C]" />
                     <span>{scrambleTimer}s</span>
                   </div>
 
@@ -723,15 +726,15 @@ return (
 
               <div className="w-full bg-[#1A100C]/10 h-2 rounded-full overflow-hidden">
                 <div
-                  className={`h-full transition-all duration-1000 ${
-                    scrambleTimer <= 3 ? 'bg-rose-500' : 'bg-[#D4AF37]'
+                  className={`h-full w-full origin-left transition-transform duration-1000 ease-linear ${
+                    scrambleTimer <= 10 ? 'bg-rose-500' : 'bg-[#D4AF37]'
                   }`}
-                  style={{ width: `${(scrambleTimer / 10) * 100}%` }}
+                  style={{ transform: `scaleX(${scrambleTimer / GAME_SECONDS})` }}
                 />
               </div>
 
               <div className="text-center py-6 bg-[#F9F4EE] rounded-2xl border border-[#1A100C]/15">
-                <span className="text-xs uppercase tracking-widest text-[#C2593F] font-bold">
+                <span className="text-xs uppercase tracking-widest text-[#A8452C] font-bold">
                   Unscramble the Cultural Term:
                 </span>
 
@@ -746,7 +749,7 @@ return (
                 ) : (
                   <button
                     onClick={() => setShowHint(true)}
-                    className="text-xs text-[#C2593F] underline hover:text-[#9A3B1B] flex items-center gap-1 mx-auto font-bold"
+                    className="text-xs text-[#A8452C] underline hover:text-[#9A3B1B] flex items-center gap-1 mx-auto font-bold"
                   >
                     <HelpCircle className="w-3.5 h-3.5" />
                     Reveal Hint (-10 pts)
@@ -765,7 +768,7 @@ return (
                       scrambleFeedback === 'correct' ||
                       scrambleFeedback === 'timeout'
                     }
-                    className="flex-1 bg-white border border-[#1A100C]/20 rounded-xl px-4 py-3 text-sm text-[#1A100C] focus:border-[#C2593F] uppercase tracking-wider font-bold disabled:opacity-50"
+                    className="flex-1 bg-white border border-[#1A100C]/20 rounded-xl px-4 py-3 text-sm text-[#1A100C] focus:border-[#A8452C] uppercase tracking-wider font-bold disabled:opacity-50"
                   />
 
                   <button
@@ -774,7 +777,7 @@ return (
                       scrambleFeedback === 'correct' ||
                       scrambleFeedback === 'timeout'
                     }
-                    className="px-6 py-3 rounded-xl bg-[#C2593F] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#9A3B1B] transition-colors disabled:opacity-50"
+                    className="px-6 py-3 rounded-xl bg-[#A8452C] text-white font-bold text-xs uppercase tracking-wider hover:bg-[#9A3B1B] transition-colors disabled:opacity-50"
                   >
                     Check Word
                   </button>
@@ -805,7 +808,7 @@ return (
                 <div className="p-4 rounded-xl bg-amber-100 border border-amber-500 text-amber-900 text-xs space-y-2">
                   <div className="font-bold text-sm flex items-center gap-1.5 text-amber-800">
                     <Clock className="w-4 h-4 text-amber-700 animate-spin" />
-                    ⏰ Time&apos;s Up! (10s Expired)
+                    ⏰ Time&apos;s Up! ({GAME_SECONDS}s Expired)
                   </div>
 
                   <p>
@@ -857,7 +860,7 @@ return (
                 Camel Caravan Quest
               </span>
 
-              <span className="text-[#C2593F]">
+              <span className="text-[#A8452C]">
                 Score: {caravanScore}
               </span>
 
@@ -893,7 +896,7 @@ return (
 
                 <button
                   onClick={initCaravanGame}
-                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#C2593F] to-[#9A3B1B] text-white font-bold text-xs uppercase tracking-wider hover:shadow-md transition-all"
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-[#A8452C] to-[#9A3B1B] text-white font-bold text-xs uppercase tracking-wider hover:shadow-md transition-all"
                 >
                   Start Caravan Journey
                 </button>
@@ -968,7 +971,7 @@ return (
 
                 <button
                   onClick={() => moveCamel('up')}
-                  className="p-2 rounded-lg bg-[#1A100C] text-[#D4AF37] flex items-center justify-center active:bg-[#C2593F] transition-colors"
+                  className="p-2 rounded-lg bg-[#1A100C] text-[#D4AF37] flex items-center justify-center active:bg-[#A8452C] transition-colors"
                 >
                   <ArrowUp className="w-4 h-4" />
                 </button>
@@ -977,21 +980,21 @@ return (
 
                 <button
                   onClick={() => moveCamel('left')}
-                  className="p-2 rounded-lg bg-[#1A100C] text-[#D4AF37] flex items-center justify-center active:bg-[#C2593F] transition-colors"
+                  className="p-2 rounded-lg bg-[#1A100C] text-[#D4AF37] flex items-center justify-center active:bg-[#A8452C] transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
 
                 <button
                   onClick={() => moveCamel('down')}
-                  className="p-2 rounded-lg bg-[#1A100C] text-[#D4AF37] flex items-center justify-center active:bg-[#C2593F] transition-colors"
+                  className="p-2 rounded-lg bg-[#1A100C] text-[#D4AF37] flex items-center justify-center active:bg-[#A8452C] transition-colors"
                 >
                   <ArrowDown className="w-4 h-4" />
                 </button>
 
                 <button
                   onClick={() => moveCamel('right')}
-                  className="p-2 rounded-lg bg-[#1A100C] text-[#D4AF37] flex items-center justify-center active:bg-[#C2593F] transition-colors"
+                  className="p-2 rounded-lg bg-[#1A100C] text-[#D4AF37] flex items-center justify-center active:bg-[#A8452C] transition-colors"
                 >
                   <ArrowRight className="w-4 h-4" />
                 </button>
