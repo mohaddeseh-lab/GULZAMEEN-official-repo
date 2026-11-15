@@ -1,7 +1,7 @@
 // NEW: lets a visitor see the real status (pending / approved / removed) of THEIR OWN submissions.
 // The browser sends the ids it got back when submitting; ids are random UUIDs, and only
 // id + status are returned, so nothing else about the files is exposed.
-import { supabaseAdmin } from '../../../lib/supabaseAdmin'
+import { getSupabaseAdmin } from '../../../lib/supabaseAdmin'
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -15,6 +15,8 @@ function tooMany(ip) {
 }
 
 export async function POST(req) {
+  const supabaseAdmin = getSupabaseAdmin()
+
   const ip =
     req.headers.get('cf-connecting-ip') || req.headers.get('x-forwarded-for') || 'unknown'
   if (tooMany(ip)) return Response.json({ error: 'Too many requests' }, { status: 429 })
