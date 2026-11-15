@@ -603,6 +603,24 @@ return (
                 {currentQuestion.question}
               </h3>
 
+              {/* NEW: quiz questions can have a picture and/or a sound (imageUrl / audioUrl) */}
+              {currentQuestion.imageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={currentQuestion.imageUrl}
+                  alt="Quiz clue"
+                  className="mx-auto max-h-56 w-auto rounded-xl border border-[#1A100C]/15 object-contain"
+                />
+              )}
+              {currentQuestion.audioUrl && (
+                <audio
+                  key={currentQuestion.id}
+                  controls
+                  src={currentQuestion.audioUrl}
+                  className="w-full"
+                />
+              )}
+
               <div className="space-y-3">
                 {currentQuestion.options.map((option, idx) => {
                   const isSelected = selectedOption === idx;
