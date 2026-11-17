@@ -1,21 +1,96 @@
-import { NextResponse } from 'next/server'
-import { getSupabaseAdmin } from '@/lib/supabaseAdmin' // adjust path if needed
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { supabaseAdmin } from '../../../../lib/supabaseAdmin'
 
-export async function GET(request) {
-  const supabaseAdmin = getSupabaseAdmin() // <-- Call it inside the handler
-
-  const { data, error } = await supabaseAdmin
-    .from('your_table')
-    .select('*')
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-
-  return NextResponse.json({ data })
+// NEW: signs a 1-hour link for each uploaded file, so the admin page can show a preview
+// (images, audio, video) even while a file is still pending.
+async function withPreviews(files) {
+  if (!process.env.R2_ACCOUNT_ID || !process.env.R2_BUCKET_NAME) return files
+  const s3 = new S3Client({
+    region: 'auto',
+    endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: process.env.R2_ACCESS_KEY_ID,
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+    },
+  })
+  return Promise.all(
+    files.map(async (f) => {
+      if (!f.r2_key) return f
+      try {
+        const preview_url = await getSignedUrl(
+          s3,
+          new GetObjectCommand({ Bucket: process.env.R2_BUCKET_NAME, Key: f.r2_key }),
+          { expiresIn: 3600 }
+        )
+        return { ...f, preview_url }
+      } catch {
+        return f
+      }
+    })
+  )
 }
 
-export async function POST(request) {
-  const supabaseAdmin = getSupabaseAdmin() // <-- Call it inside each handler that needs it
-  // ... rest of your POST logic
+const attempts = new Map()
+function blocked(ip) {
+  const now = Date.now()
+  const recent = (attempts.get(ip) || []).filter((t) => now - t < 60000)
+  recent.push(now)
+  attempts.set(ip, recent)
+  return recent.length > 20
+}
+
+function check(req) {
+  const ip =
+    req.headers.get('cf-connecting-ip') ||
+    req.headers.get('x-forwarded-for') ||
+    'unknown'
+  if (blocked(ip)) {
+    return Response.json({ error: 'Too many requests' }, { status: 429 })
+  }
+  const pw = process.env.ADMIN_PASSWORD
+  if (!pw || req.headers.get('x-admin-password') !== pw) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  return null
+}
+
+export async function GET(req) {
+  const denied = check(req)
+  if (denied) return denied
+
+  const files = await supabaseAdmin
+    .from('files')
+    .select('*')
+    .order('created_at', { ascending: false })
+  const reports = await supabaseAdmin
+    .from('reports')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  // NEW: feedback is shown on the admin page too
+  const feedback = await supabaseAdmin
+    .from('feedback')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  return Response.json({
+    files: await withPreviews(files.data || []),
+    reports: reports.data || [],
+    feedback: feedback.data || [],
+  })
+}
+
+export async function POST(req) {
+  const denied = check(req)
+  if (denied) return denied
+
+  const { id, status } = await req.json()
+  if (!['approved', 'removed', 'pending'].includes(status)) {
+    return Response.json({ error: 'Bad status' }, { status: 400 })
+  }
+
+  const { error } = await supabaseAdmin.from('files').update({ status }).eq('id', id)
+  if (error) return Response.json({ error: error.message }, { status: 500 })
+  return Response.json({ ok: true })
 }

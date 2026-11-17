@@ -1,16 +1,8 @@
 'use client';
 
-// NEW: small "Translate into Balochi" tool with a tap-to-type Balochi letter keyboard
-import React, { useRef, useState } from 'react';
+// NEW: small "Translate into Balochi" tool
+import React, { useState } from 'react';
 import { Languages, Copy, Check, Loader2 } from 'lucide-react';
-
-// Edit this list to match your Balochi keyboard (one string per key)
-const BALOCHI_LETTERS = [
-  'ا', 'آ', 'ب', 'پ', 'ت', 'ٹ', 'ث', 'ج', 'چ', 'ح', 'خ', 'د', 'ڈ', 'ذ',
-  'ر', 'ڑ', 'ز', 'ژ', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق',
-  'ک', 'گ', 'ل', 'م', 'ن', 'ں', 'و', 'ہ', 'ھ', 'ء', 'ی', 'ے',
-  'ۆ', 'ێ', 'ۏ', '،', '؟', '۔',
-];
 
 export const BalochiTranslator: React.FC = () => {
   const [input, setInput] = useState('');
@@ -19,7 +11,6 @@ export const BalochiTranslator: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
-  const outRef = useRef<HTMLTextAreaElement>(null);
 
   const translate = async () => {
     if (!input.trim() || loading) return;
@@ -45,20 +36,6 @@ export const BalochiTranslator: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Types a tapped letter into the Balochi box at the cursor
-  const insertLetter = (ch: string) => {
-    const el = outRef.current;
-    if (!el) return setOutput((o) => o + ch);
-    const start = el.selectionStart ?? output.length;
-    const end = el.selectionEnd ?? output.length;
-    const next = output.slice(0, start) + ch + output.slice(end);
-    setOutput(next);
-    requestAnimationFrame(() => {
-      el.focus();
-      el.setSelectionRange(start + ch.length, start + ch.length);
-    });
   };
 
   const copy = async () => {
@@ -134,7 +111,6 @@ export const BalochiTranslator: React.FC = () => {
             </div>
             <textarea
               id="tr-out"
-              ref={outRef}
               dir="rtl"
               lang="bal"
               value={output}
@@ -143,39 +119,6 @@ export const BalochiTranslator: React.FC = () => {
               className="w-full rounded-lg border border-[#2D1E18]/20 bg-[#FAF4EB] p-3 text-lg leading-loose text-[#2D1E18] focus:outline-none focus:border-[#A8452C]"
               style={{ fontFamily: "'Noto Nastaliq Urdu','Noto Naskh Arabic','Jameel Noori Nastaleeq',serif" }}
             />
-          </div>
-
-          <div>
-            <div className="text-xs font-bold text-[#2D1E18] mb-1.5 uppercase tracking-wider">
-              Balochi keyboard (tap to type into the Balochi box)
-            </div>
-            <div dir="rtl" className="flex flex-wrap gap-1.5">
-              {BALOCHI_LETTERS.map((ch) => (
-                <button
-                  key={ch}
-                  type="button"
-                  onClick={() => insertLetter(ch)}
-                  aria-label={`Letter ${ch}`}
-                  className="w-9 h-9 rounded-md bg-[#FAF4EB] border border-[#2D1E18]/20 text-lg text-[#2D1E18] hover:bg-[#D4AF37]/30 active:scale-95"
-                >
-                  {ch}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => insertLetter(' ')}
-                className="px-4 h-9 rounded-md bg-[#FAF4EB] border border-[#2D1E18]/20 text-xs font-bold text-[#2D1E18]"
-              >
-                Space
-              </button>
-              <button
-                type="button"
-                onClick={() => setOutput((o) => o.slice(0, -1))}
-                className="px-4 h-9 rounded-md bg-[#FAF4EB] border border-[#2D1E18]/20 text-xs font-bold text-[#2D1E18]"
-              >
-                ⌫
-              </button>
-            </div>
           </div>
 
           <p className="text-[11px] text-[#4A3B34] leading-relaxed border-t border-[#2D1E18]/10 pt-3">

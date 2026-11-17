@@ -19,7 +19,12 @@ export async function POST(req) {
   }
 
   const key = process.env.GOOGLE_TRANSLATE_API_KEY
-  if (!key) return Response.json({ error: 'Translator is not set up yet' }, { status: 503 })
+  if (!key) {
+    return Response.json(
+      { error: 'Translator is not set up yet (GOOGLE_TRANSLATE_API_KEY is missing on the server).' },
+      { status: 503 }
+    )
+  }
 
   let body
   try {
@@ -45,8 +50,14 @@ export async function POST(req) {
         signal: AbortSignal.timeout(8000),
       }
     )
-    if (!res.ok) return Response.json({ error: 'Translation failed, try again' }, { status: 502 })
-    const data = await res.json()
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) {
+      // CHANGED: pass Google's reason on, so a bad key, missing billing or an unsupported
+      // language is visible instead of a vague "Translation failed".
+      const reason = data?.error?.message || `HTTP ${res.status}`
+      console.error('Google Translate error', res.status, reason)
+      return Response.json({ error: `Google Translate said: ${reason}` }, { status: 502 })
+    }
     const t = data?.data?.translations?.[0]
     if (!t) return Response.json({ error: 'No translation returned' }, { status: 502 })
     return Response.json({
