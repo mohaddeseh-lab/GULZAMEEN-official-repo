@@ -509,3 +509,245 @@ export const WORD_SCRAMBLE_ITEMS: WordScrambleItem[] = [
   },
 ];
 
+export const INITIAL_CULTURAL_ITEMS: CulturalItem[] = [
+  // --- EASTERN REGION ---
+  {
+    id: 'east-1',
+    title: 'Epic Tale of Hani & Sheh Mureed',
+    balochiTitle: 'Hani o Sheh Mureed e Kissa',
+    region: 'eastern',
+    category: 'kissa',
+    description: 'The legendary 15th-century tale of unconditional devotion, chivalry, and spiritual sacrifice between chieftain Sheh Mureed and Hani of the Rind tribe.',
+    details: [
+      'Sheh Mureed, renowned for his unmatched archery skills with his bow "Kaman", surrendered his leadership to wander as an ascetic after a sacred pledge bound Hani to another chieftain.',
+      'The epic is sung by bards (Pahlawan) using the Damboor lute across 100+ poetic couplets.',
+      'Symbolizes honor, spiritual purity, and selfless commitment in Balochi folklore.'
+    ],
+    featured: true,
+    createdAt: Date.now() - 86400000 * 15
+  },
+  {
+    id: 'east-2',
+    title: 'The Battle Ballads of Chakar & Gowahram',
+    balochiTitle: 'Mir Chakar e Sheyr',
+    region: 'eastern',
+    category: 'kissa',
+    description: 'An oral epic commemorating the 30-year conflict between Mir Chakar Rind and Mir Gowahram Lashari, celebrating tribal bravery and reconciliation.',
+    details: [
+      'Narrates tactical horse riding, sword craft, and tribal alliances across the Kachhi plain.',
+      'Preserved entirely through poetic chants passed down by memory through generations.'
+    ],
+    createdAt: Date.now() - 86400000 * 20
+  },
+  {
+    id: 'east-3',
+    title: 'Zahirok (Song of Desert Longing)',
+    balochiTitle: 'Zahirok e Saoth',
+    region: 'eastern',
+    category: 'saoth',
+    description: 'A deeply melancholic vocal and Suroz melody expressing longing for distant loved ones, homeland pastures, or bygone eras.',
+    details: [
+      'Played on the Suroz (a four-stringed upright bowed lute with resonant strings).',
+      'The microtonal glides mirror the vast quietude of desert winds.'
+    ],
+    createdAt: Date.now() - 86400000 * 10
+  },
+  {
+    id: 'east-4',
+    title: 'Traditional Sajji (Fire-Roasted Mutton)',
+    balochiTitle: 'Balochi Sajji',
+    region: 'eastern',
+    category: 'recipes',
+    description: 'Succulent whole leg or side of lamb skewers seasoned simply with rock salt and slow-roasted over fragrant wild logs.',
+    details: [
+      'Preparation: Skewer high-quality mutton or goat with wooden stakes.',
+      'Cooking: Arrange stakes around an open fire ring filled with smoldering wild oak coals.',
+      'Roast slowly for 2 to 3 hours until golden and crisp outside, cooked through inside.',
+      'Served hot on traditional Naan with green chutney and fresh lemons.'
+    ],
+    mediaUrl: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800',
+    createdAt: Date.now() - 86400000 * 5
+  },
+  {
+    id: 'east-5',
+    title: 'Kapuk Motif Embroidery',
+    balochiTitle: 'Kapuk e Duch',
+    region: 'eastern',
+    category: 'baloch_duch',
+    description: 'Intricate needlework featuring small dove-like geometric motifs stitched with deep red and gold threads.',
+    details: [
+      'Technique: Counting thread warp and weft to craft tiny symmetrical diamond panels.',
+      'Mirror accents (Aashtag) are integrated into the center of each geometric star.'
+    ],
+    patternMotifs: ['Geometric Dove', 'Diamond Grid', 'Gilded Border'],
+    createdAt: Date.now() - 86400000 * 12
+  },
+  {
+    id: 'east-jalar',
+    title: 'Jalar Embroidery Border',
+    balochiTitle: 'جالار',
+    region: 'eastern',
+    category: 'baloch_duch',
+    description: 'Traditional Balochi embroidery border stitch (Jalar) featuring vibrant multi-colored vertical thread stripes woven meticulously along sleeve and dress edges.',
+    mediaUrl: '/images/embroidery_jalar_1785499548861.jpg',
+    patternMotifs: ['Vertical Stripe Border', 'Multi-color Threadwork', 'Jalar Edge Stitch'],
+    createdAt: Date.now() - 86400000 * 2
+  },
+  {
+    id: 'east-6',
+    title: 'Proverb on Land and Honor',
+    balochiTitle: 'Zameen e waja, mard e ghairat',
+    region: 'eastern',
+    category: 'bathal',
+    description: 'A classic Baloch saying emphasizing dignity and stewardship of one\'s homeland.',
+    translation: 'The land is a person\'s dignity, and honor defines the human spirit.',
+    createdAt: Date.now() - 86400000 * 8
+  },
+
+  // --- WESTERN REGION ---
+  {
+    id: 'west-1',
+    title: 'Dosten & Shireen (Highland Love Tale)',
+    balochiTitle: 'Dosten o Shireen e Kissa',
+    region: 'western',
+    category: 'kissa',
+    description: 'A classic highland story of warrior Dosten who escaped captivity with the aid of his loyal steed to return to his betrothed Shireen.',
+    details: [
+      'Explores themes of resilience, horse-whispering, and keeping vows against overwhelming odds.',
+      'Retold annually during highland spring gatherings in Nushki and Chaghi.'
+    ],
+    createdAt: Date.now() - 86400000 * 18
+  },
+  {
+    id: 'west-2',
+    title: 'Suroz Instrumental Solos',
+    balochiTitle: 'Suroz e Naat',
+    region: 'western',
+    category: 'saoth',
+    description: 'The Suroz is the soul instrument of Balochistan, bowed with horsehair to create evocative, bird-like harmonic resonances.',
+    details: [
+      'Master musicians sculpt the wooden soundbox from mulberry or wild olive wood.',
+      'Features 3 main playing strings and 11-13 sympathetic metal resonance strings.'
+    ],
+    createdAt: Date.now() - 86400000 * 6
+  },
+  {
+    id: 'west-3',
+    title: 'Kaak (Stone Bread / Krch)',
+    balochiTitle: 'Kaak e Roti',
+    region: 'western',
+    category: 'recipes',
+    description: 'Thick leavened dough wrapped tightly around smooth heated river stones and baked directly over glowing coals.',
+    details: [
+      'Knead flour with milk, salt, cardamom, and a touch of clarified butter.',
+      'Select smooth river pebbles and heat them inside open coals until white-hot.',
+      'Wrap dough around hot stone and bake in ash coals until golden brown.',
+      'Extremely durable food designed for highland nomads traversing long distances.'
+    ],
+    createdAt: Date.now() - 86400000 * 14
+  },
+  {
+    id: 'west-4',
+    title: 'Kantal Starburst Needlework',
+    balochiTitle: 'Kantal Duch',
+    region: 'western',
+    category: 'baloch_duch',
+    description: 'Highland geometric embroidery utilizing sharp angular starbursts and tiny circular glass mirrors.',
+    patternMotifs: ['Eight-pointed Star', 'Terracotta Border', 'Silver Thread Highlight'],
+    createdAt: Date.now() - 86400000 * 9
+  },
+  {
+    id: 'west-sabzu',
+    title: 'Sabzu Geometric Motif',
+    balochiTitle: 'سبزو',
+    region: 'western',
+    category: 'baloch_duch',
+    description: 'Classic Balochi geometric needlework motif (Sabzu) characterized by stepped triangular and diamond patterns in rich red, dark blue, and white thread tones.',
+    mediaUrl: '/images/embroidery_sabzu_1785499565991.jpg',
+    patternMotifs: ['Stepped Triangle', 'Geometric Motif', 'Symmetrical Stitches'],
+    createdAt: Date.now() - 86400000 * 3
+  },
+  {
+    id: 'west-5',
+    title: 'Proverb on Steadfast Word',
+    balochiTitle: 'Musalman e qaul, chushin sang e pahr',
+    region: 'western',
+    category: 'bathal',
+    description: 'Saying describing the sanctity of a promised word.',
+    translation: 'A true word given by an honorable person is as permanent as a mountain rock.',
+    createdAt: Date.now() - 86400000 * 3
+  },
+
+  // --- SOUTHERN REGION ---
+  {
+    id: 'south-1',
+    title: 'Sea Chants of Makran Coast',
+    balochiTitle: 'Makran e Daryaee Saoth',
+    region: 'southern',
+    category: 'saoth',
+    description: 'Rhythmic chanting used by Gwadar fisherman when pulling nets or navigating Arabian sea tides.',
+    details: [
+      'Heavy polyrhythmic hand-clapping accompanied by Gwadar Dhol and Sorna oboe.',
+      'Celebrates the bounty of the sea and protection under stormy skies.'
+    ],
+    createdAt: Date.now() - 86400000 * 4
+  },
+  {
+    id: 'south-2',
+    title: 'Khaddi Kabbab (Clay Pit Meat)',
+    balochiTitle: 'Khaddi Kabbab',
+    region: 'southern',
+    category: 'recipes',
+    description: 'Slow subterranean smoked meat cooked in sealed clay pits lined with palm fronds.',
+    details: [
+      'Dig an underground pit and line with red coals.',
+      'Stuff marinated lamb with basmati rice, dry fruits, and aromatic spices.',
+      'Seal the pit opening with stone slab and mud clay for 4-5 hours of smoke roasting.'
+    ],
+    createdAt: Date.now() - 86400000 * 11
+  },
+  {
+    id: 'south-3',
+    title: 'Pashk & Jup Intricate Dress',
+    balochiTitle: 'Pashk o Jup',
+    region: 'southern',
+    category: 'baloch_duch',
+    description: 'The iconic traditional long dress featuring a large front chest panel (Zih) and a deep pocket pouch (Jup).',
+    details: [
+      'Takes 3 to 6 months of meticulous hand-stitching to complete one chest piece.',
+      'Colors range from vibrant terracottas and golds to deep ocean blues.'
+    ],
+    patternMotifs: ['Zih Chest Emblem', 'Jup Pocket Pocket Work', 'Sleeve Cuffs'],
+    createdAt: Date.now() - 86400000 * 7
+  },
+  {
+    id: 'south-paliwar',
+    title: 'Paliwar Motif Block',
+    balochiTitle: 'پلیوار',
+    region: 'southern',
+    category: 'baloch_duch',
+    description: 'Historic Balochi embroidery motif block pattern (Paliwar) displaying intricate circular and cross geometric stamps used for hand-embroidery framing.',
+    mediaUrl: '/images/embroidery_paliwar_1785499585497.jpg',
+    patternMotifs: ['Circular Emblem', 'Starburst Cross', 'Paliwar Motif Stamps'],
+    createdAt: Date.now() - 86400000 * 4
+  },
+  {
+    id: 'south-4',
+    title: '',
+    balochiTitle: 'Gwadar e Gohar e Kissa',
+    region: 'southern',
+    category: 'kissa',
+    description: 'A coastal folk tale of courage where a young diver braved deep ocean waters to retrieve a rare pearl to save his village during drought.',
+    createdAt: Date.now() - 86400000 * 16
+  },
+  {
+    id: 'south-5',
+    title: 'Proverb on Deep Friendship',
+    balochiTitle: 'Mahr e dost, koh e burz',
+    region: 'southern',
+    category: 'bathal',
+    description: 'A poetic coastal and oasis proverb about genuine friendship.',
+    translation: 'True love for a cherished friend stands higher than the loftiest mountain peak.',
+    createdAt: Date.now() - 86400000 * 2
+  }
+];
