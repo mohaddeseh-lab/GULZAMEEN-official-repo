@@ -71,7 +71,13 @@ export default function Admin() {
       const res = await fetch('/api/admin/files', { headers: { 'x-admin-password': pw } })
       if (!res.ok) {
         setLoggedIn(false)
-        setMessage(res.status === 401 ? 'Wrong password' : 'Something went wrong')
+        // CHANGED: show the real status so a server problem is not mistaken for a wrong password
+        const info = await res.json().catch(() => ({}))
+        setMessage(
+          res.status === 401
+            ? 'Wrong password'
+            : `Server error (${res.status})${info.error ? ': ' + info.error : ''}. The password is not the problem. Check the Worker logs.`
+        )
         return
       }
       const data = await res.json()
