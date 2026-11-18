@@ -59,26 +59,24 @@ export async function GET(req) {
   const denied = check(req)
   if (denied) return denied
 
-  const files = await supabaseAdmin
-    .from('files')
-    .select('*')
-    .order('created_at', { ascending: false })
-  const reports = await supabaseAdmin
-    .from('reports')
-    .select('*')
-    .order('created_at', { ascending: false })
+  // CHANGED: after the password check, any failure is reported with its real reason
+  // (only someone who knows the admin password can see this message).
+  try {
+    const db = supabaseAdmin
+    const files = await db.from('files').select('*').order('created_at', { ascending: false })
+    if (files.error) throw new Error(`files table: ${files.error.message}`)
+    const reports = await db.from('reports').select('*').order('created_at', { ascending: false })
+    const feedback = await db.from('feedback').select('*').order('created_at', { ascending: false })
 
-  // NEW: feedback is shown on the admin page too
-  const feedback = await supabaseAdmin
-    .from('feedback')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  return Response.json({
-    files: await withPreviews(files.data || []),
-    reports: reports.data || [],
-    feedback: feedback.data || [],
-  })
+    return Response.json({
+      files: await withPreviews(files.data || []),
+      reports: reports.data || [],
+      feedback: feedback.data || [],
+    })
+  } catch (e) {
+    console.error('Admin GET failed', e)
+    return Response.json({ error: e instanceof Error ? e.message : 'Unknown error' }, { status: 500 })
+  }
 }
 
 export async function POST(req) {
