@@ -38,7 +38,7 @@ Search any file for `CHANGED:` / `NEW:` comments to jump to the edits. Full line
 - `ContributionHub.tsx`: one card, "Thank You! Your contribution was sent and will appear on the site after review."; shown only if the upload succeeded; errors show inside the form; button says "Submit for Review"
 
 ## Do these yourself
-1. Resend: create a free account, then `npx wrangler secret put RESEND_API_KEY` and `npx wrangler secret put FEEDBACK_TO_EMAIL` (your email). Add the same two to `.dev.vars` for local testing. Until you own a domain, Resend only delivers to the email you signed up with.
+1. Resend: create a free account, then `` and `npx wrangler secret put FEEDBACK_TO_EMAIL` (your email). Add the same two to `.dev.vars` for local testing. Until you own a domain, Resend only delivers to the email you signed up with.
 2. `npm run build`, fix anything it reports, then `npm run deploy`.
 3. Test offline on the deployed site: load it once online, then DevTools -> Application -> Service Workers -> Offline.
 4. Old submissions in your browser (before this fix) have no server id; they are matched to approved items by title + name, otherwise shown as Pending Review.
