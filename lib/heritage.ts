@@ -62,6 +62,6 @@ export const CATEGORY_NAMES: Record<CategoryId, string> = {
   kissa: 'Folk Stories',
   saoth: 'Music',
   recipes: 'Recipes',
-  baloch_duch: 'Embroidery',
+  baloch_duch: 'Traditional Assets',
   bathal: 'Proverbs',
 };

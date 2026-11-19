@@ -18,7 +18,6 @@ const AnalyticsSection = dynamic(() => import('../components/AnalyticsSection').
 const ContributionHub = dynamic(() => import('../components/ContributionHub').then((m) => m.ContributionHub));
 const GamesSection = dynamic(() => import('../components/GamesSection').then((m) => m.GamesSection));
 const FeedbackSection = dynamic(() => import('../components/FeedbackSection').then((m) => m.FeedbackSection));
-const BalochiTranslator = dynamic(() => import('../components/BalochiTranslator').then((m) => m.BalochiTranslator));
 const Footer = dynamic(() => import('../components/Footer').then((m) => m.Footer));
 
 const MAX_MEDIA_SIZE = 50 * 1024 * 1024;
@@ -311,8 +310,6 @@ export default function Home() {
         defaultRegion={modalDefaultRegion}
         defaultCategory={modalDefaultCategory}
       />
-
-      <BalochiTranslator />
 
       <GamesSection />
 

@@ -676,7 +676,7 @@ return (
                                             <option value="saoth">Traditional Music (Saoth)</option>
                                             <option value="recipes">Traditional Recipes</option>
                                             <option value="baloch_duch">
-                                                Traditional Embroidery (Baloch Duch)
+                                                Traditional Assets (Baloch Duch)
                                             </option>
                                             <option value="bathal">Proverbs / Sayings (Bathal)</option>
                                         </select>

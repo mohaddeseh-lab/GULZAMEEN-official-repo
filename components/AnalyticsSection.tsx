@@ -65,7 +65,7 @@ export const AnalyticsSection: React.FC<AnalyticsProps> = ({
       textColor: 'text-white',
     },
     {
-      label: 'Embroidery (Duch)',
+      label: 'Traditional Assets',
       count: embroideryCount,
       color: 'bg-[#2D1E18]',
       textColor: 'text-[#D4AF37]',

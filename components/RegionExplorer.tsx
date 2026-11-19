@@ -250,7 +250,7 @@ export const RegionExplorer: React.FC<RegionExplorerProps> = ({
     },
     {
       id: 'baloch_duch',
-      name: 'Embroidery',
+      name: 'Taditional Assets',
       balochi: 'دۆچ',
       icon: Sparkles,
     },

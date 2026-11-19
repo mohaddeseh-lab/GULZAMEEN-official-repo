@@ -1,4 +1,4 @@
-import { getSupabaseAdmin } from '../../../lib/supabaseAdmin'
+import { supabaseAdmin } from '../../../lib/supabaseAdmin'
 
 const REGIONS = ['eastern', 'western', 'southern', 'all']
 const CATEGORIES = ['kissa', 'saoth', 'recipes', 'baloch_duch', 'bathal']
@@ -61,8 +61,6 @@ async function emailFeedback({ name, email, rating, suggestions }) {
 }
 
 export async function POST(req) {
-  const supabaseAdmin = getSupabaseAdmin()
-
   const ip =
     req.headers.get('cf-connecting-ip') ||
     req.headers.get('x-forwarded-for') ||
